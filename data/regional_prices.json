@@ -1,0 +1,83 @@
+{
+  "India": {
+    "Karnataka": {
+      "Bengaluru": {
+        "currency": "INR",
+        "last_updated": "2026-08-28",
+        "source": "VDM Constructions and Bangalore market sources",
+        "materials": {
+          "cement_opc_53": {
+            "name": "OPC 53 Grade Cement",
+            "unit": "50kg bag",
+            "min_price": 360,
+            "max_price": 430,
+            "price": 395
+          },
+          "cement_ppc": {
+            "name": "PPC Cement",
+            "unit": "50kg bag",
+            "min_price": 360,
+            "max_price": 430,
+            "price": 395
+          },
+          "tmt_fe500d": {
+            "name": "TMT Steel Fe500D",
+            "unit": "kg",
+            "min_price": 58,
+            "max_price": 72,
+            "price": 65
+          },
+          "m_sand": {
+            "name": "M-Sand",
+            "unit": "cft",
+            "min_price": 35,
+            "max_price": 50,
+            "price": 42.5
+          },
+          "river_sand": {
+            "name": "River Sand",
+            "unit": "cft",
+            "min_price": 65,
+            "max_price": 85,
+            "price": 75
+          },
+          "aggregate_20mm": {
+            "name": "20mm Coarse Aggregate",
+            "unit": "cft",
+            "min_price": 38,
+            "max_price": 50,
+            "price": 44
+          },
+          "red_brick": {
+            "name": "Red Clay Brick",
+            "unit": "piece",
+            "min_price": 8,
+            "max_price": 11,
+            "price": 9.5
+          },
+          "aac_block": {
+            "name": "AAC Block",
+            "unit": "piece",
+            "min_price": 64,
+            "max_price": 102,
+            "price": 83
+          },
+          "tiles": {
+            "name": "Vitrified Tiles",
+            "unit": "sqft",
+            "min_price": 62,
+            "max_price": 115,
+            "price": 88.5
+          },
+          "paint": {
+            "name": "Interior Paint",
+            "unit": "sqft",
+            "min_price": 35,
+            "max_price": 55,
+            "price": 45
+          }
+        }
+      }
+    }
+  }
+}

@@ -274,7 +274,7 @@ namespace HousePlanner.Editor
 
         private static void CreateEventSystem()
         {
-            if (FindObjectOfType<EventSystem>() == null)
+            if (Object.FindAnyObjectByType<EventSystem>() == null)
             {
                 GameObject esGo = new GameObject("EventSystem");
                 esGo.AddComponent<EventSystem>();

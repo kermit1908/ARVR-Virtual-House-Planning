@@ -1,0 +1,16 @@
+{
+    "name": "HousePlanner.FloorPlan",
+    "rootNamespace": "HousePlanner.FloorPlan",
+    "references": [
+        "HousePlanner.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

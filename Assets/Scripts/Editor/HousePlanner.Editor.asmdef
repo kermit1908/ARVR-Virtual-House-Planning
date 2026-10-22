@@ -1,0 +1,27 @@
+{
+    "name": "HousePlanner.Editor",
+    "rootNamespace": "HousePlanner.Editor",
+    "references": [
+        "HousePlanner.Core",
+        "HousePlanner.Persistence",
+        "HousePlanner.FloorPlan",
+        "HousePlanner.HouseGeneration",
+        "HousePlanner.Furniture",
+        "HousePlanner.AR",
+        "HousePlanner.UI",
+        "HousePlanner.Backend",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.CoreUtils"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

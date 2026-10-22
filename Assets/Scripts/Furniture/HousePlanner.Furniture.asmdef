@@ -1,0 +1,17 @@
+{
+    "name": "HousePlanner.Furniture",
+    "rootNamespace": "HousePlanner.Furniture",
+    "references": [
+        "HousePlanner.Core",
+        "HousePlanner.HouseGeneration"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

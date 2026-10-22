@@ -1,0 +1,22 @@
+{
+    "name": "HousePlanner.UI",
+    "rootNamespace": "HousePlanner.UI",
+    "references": [
+        "HousePlanner.Core",
+        "HousePlanner.Persistence",
+        "HousePlanner.FloorPlan",
+        "HousePlanner.HouseGeneration",
+        "HousePlanner.Furniture",
+        "HousePlanner.AR",
+        "HousePlanner.Backend"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

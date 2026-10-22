@@ -1,0 +1,21 @@
+{
+    "name": "HousePlanner.AR",
+    "rootNamespace": "HousePlanner.AR",
+    "references": [
+        "HousePlanner.Core",
+        "HousePlanner.HouseGeneration",
+        "HousePlanner.Furniture",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.ARSubsystems",
+        "Unity.XR.CoreUtils"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

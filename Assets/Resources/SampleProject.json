@@ -1,0 +1,218 @@
+{
+  "projectId": "sample-project-001",
+  "projectName": "Sample Modern Home",
+  "schemaVersion": 1,
+  "createdAtIso": "2026-10-22T12:00:00.0000000Z",
+  "modifiedAtIso": "2026-10-22T12:00:00.0000000Z",
+  "floorPlanSettings": {
+    "gridSize": 0.5,
+    "snapToGrid": true,
+    "showMeasurements": true,
+    "defaultWallHeight": 2.8,
+    "defaultWallThickness": 0.15,
+    "units": "meters"
+  },
+  "rooms": [
+    {
+      "roomId": "room-living-01",
+      "roomName": "Living Room",
+      "roomType": 0,
+      "width": 5.0,
+      "length": 4.0,
+      "height": 2.8,
+      "position": { "x": 0.0, "y": 0.0 },
+      "rotation": 0.0,
+      "floorMaterial": "wood",
+      "wallColor": "#F0EFEA",
+      "ceilingColor": "#FFFFFF",
+      "walls": [
+        {
+          "wallId": "w_liv_south",
+          "startPoint": { "x": 0.0, "y": 0.0 },
+          "endPoint": { "x": 5.0, "y": 0.0 },
+          "height": 2.8,
+          "thickness": 0.15,
+          "materialColor": "#F0EFEA",
+          "openings": [
+            {
+              "id": "op_main_door",
+              "openingType": 0,
+              "position": 0.5,
+              "width": 0.9,
+              "height": 2.1,
+              "elevation": 0.0
+            }
+          ]
+        },
+        {
+          "wallId": "w_liv_east",
+          "startPoint": { "x": 5.0, "y": 0.0 },
+          "endPoint": { "x": 5.0, "y": 4.0 },
+          "height": 2.8,
+          "thickness": 0.15,
+          "materialColor": "#F0EFEA",
+          "openings": [
+            {
+              "id": "op_liv_win",
+              "openingType": 1,
+              "position": 0.5,
+              "width": 1.6,
+              "height": 1.2,
+              "elevation": 0.9
+            }
+          ]
+        },
+        {
+          "wallId": "w_liv_north",
+          "startPoint": { "x": 5.0, "y": 4.0 },
+          "endPoint": { "x": 0.0, "y": 4.0 },
+          "height": 2.8,
+          "thickness": 0.15,
+          "materialColor": "#F0EFEA",
+          "openings": []
+        },
+        {
+          "wallId": "w_liv_west",
+          "startPoint": { "x": 0.0, "y": 4.0 },
+          "endPoint": { "x": 0.0, "y": 0.0 },
+          "height": 2.8,
+          "thickness": 0.15,
+          "materialColor": "#F0EFEA",
+          "openings": []
+        }
+      ]
+    },
+    {
+      "roomId": "room-kitchen-02",
+      "roomName": "Kitchen",
+      "roomType": 2,
+      "width": 3.0,
+      "length": 3.0,
+      "height": 2.8,
+      "position": { "x": 5.0, "y": 0.0 },
+      "rotation": 0.0,
+      "floorMaterial": "tile",
+      "wallColor": "#E8ECEF",
+      "ceilingColor": "#FFFFFF",
+      "walls": []
+    },
+    {
+      "roomId": "room-bedroom-03",
+      "roomName": "Master Bedroom",
+      "roomType": 1,
+      "width": 4.0,
+      "length": 3.5,
+      "height": 2.8,
+      "position": { "x": 0.0, "y": 4.0 },
+      "rotation": 0.0,
+      "floorMaterial": "wood",
+      "wallColor": "#E2E8F0",
+      "ceilingColor": "#FFFFFF",
+      "walls": []
+    },
+    {
+      "roomId": "room-bathroom-04",
+      "roomName": "Bathroom",
+      "roomType": 3,
+      "width": 2.5,
+      "length": 2.0,
+      "height": 2.8,
+      "position": { "x": 4.0, "y": 4.0 },
+      "rotation": 0.0,
+      "floorMaterial": "tile",
+      "wallColor": "#CBD5E1",
+      "ceilingColor": "#FFFFFF",
+      "walls": []
+    }
+  ],
+  "furnitureItems": [
+    {
+      "instanceId": "furn-sofa-01",
+      "catalogueId": "Sofa",
+      "roomId": "room-living-01",
+      "category": 0,
+      "position": { "x": 2.5, "y": 0.0, "z": 1.5 },
+      "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#2B6CB0",
+      "customName": "Living Room Sofa"
+    },
+    {
+      "instanceId": "furn-coffee-02",
+      "catalogueId": "CoffeeTable",
+      "roomId": "room-living-01",
+      "category": 2,
+      "position": { "x": 2.5, "y": 0.0, "z": 2.4 },
+      "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#8B5A2B",
+      "customName": "Coffee Table"
+    },
+    {
+      "instanceId": "furn-tv-03",
+      "catalogueId": "TV",
+      "roomId": "room-living-01",
+      "category": 7,
+      "position": { "x": 2.5, "y": 0.0, "z": 3.8 },
+      "rotation": { "x": 0.0, "y": 180.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#1A202C",
+      "customName": "Media Center"
+    },
+    {
+      "instanceId": "furn-bed-04",
+      "catalogueId": "Bed_Double",
+      "roomId": "room-bedroom-03",
+      "category": 1,
+      "position": { "x": 2.0, "y": 0.0, "z": 5.5 },
+      "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#E2E8F0",
+      "customName": "King Bed"
+    },
+    {
+      "instanceId": "furn-counter-05",
+      "catalogueId": "KitchenCounter",
+      "roomId": "room-kitchen-02",
+      "category": 4,
+      "position": { "x": 6.5, "y": 0.0, "z": 0.6 },
+      "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#F7FAFC",
+      "customName": "Island Counter"
+    },
+    {
+      "instanceId": "furn-fridge-06",
+      "catalogueId": "Refrigerator",
+      "roomId": "room-kitchen-02",
+      "category": 4,
+      "position": { "x": 7.5, "y": 0.0, "z": 2.2 },
+      "rotation": { "x": 0.0, "y": 90.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#CBD5E0",
+      "customName": "Double Fridge"
+    },
+    {
+      "instanceId": "furn-toilet-07",
+      "catalogueId": "Toilet",
+      "roomId": "room-bathroom-04",
+      "category": 5,
+      "position": { "x": 5.8, "y": 0.0, "z": 5.5 },
+      "rotation": { "x": 0.0, "y": 180.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#FFFFFF",
+      "customName": "Main Toilet"
+    },
+    {
+      "instanceId": "furn-tub-08",
+      "catalogueId": "Bathtub",
+      "roomId": "room-bathroom-04",
+      "category": 5,
+      "position": { "x": 4.5, "y": 0.0, "z": 4.5 },
+      "rotation": { "x": 0.0, "y": 90.0, "z": 0.0 },
+      "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+      "materialColor": "#FFFFFF",
+      "customName": "Soaking Tub"
+    }
+  ]
+}

@@ -27,9 +27,6 @@ namespace HousePlanner.FloorPlan
         [SerializeField, Tooltip("Zoom sensitivity for scroll wheel.")]
         private float _zoomSpeed = 2f;
 
-        [SerializeField, Tooltip("Zoom sensitivity for pinch gesture.")]
-        private float _pinchZoomSpeed = 0.05f;
-
         [Header("Pan Settings")]
         [SerializeField, Tooltip("Pan speed multiplier.")]
         private float _panSpeed = 1f;

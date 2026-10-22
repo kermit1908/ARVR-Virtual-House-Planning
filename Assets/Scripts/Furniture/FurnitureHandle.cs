@@ -14,7 +14,6 @@ namespace HousePlanner.Furniture
     {
         [SerializeField] private FurnitureItemData _data;
         private bool _isSelected;
-        private Outline _outlineComponent;
         private Renderer[] _renderers;
         private Color[] _originalColors;
 

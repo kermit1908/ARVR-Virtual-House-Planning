@@ -49,7 +49,7 @@ namespace HousePlanner.UI
         {
             if (_floorPlanController == null)
             {
-                _floorPlanController = FindFirstObjectByType<FloorPlanController>();
+                _floorPlanController = FindObjectOfType<FloorPlanController>();
             }
 
             SetupListeners();

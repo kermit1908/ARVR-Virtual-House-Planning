@@ -1,0 +1,12 @@
+﻿<Solution>
+  <Project Path="HousePlanner.Furniture.csproj" />
+  <Project Path="HousePlanner.AR.csproj" />
+  <Project Path="HousePlanner.FloorPlan.csproj" />
+  <Project Path="HousePlanner.HouseGeneration.csproj" />
+  <Project Path="HousePlanner.UI.csproj" />
+  <Project Path="HousePlanner.Persistence.csproj" />
+  <Project Path="HousePlanner.Core.csproj" />
+  <Project Path="HousePlanner.Editor.csproj" />
+  <Project Path="HousePlanner.Tests.EditMode.csproj" />
+  <Project Path="HousePlanner.Backend.csproj" />
+</Solution>

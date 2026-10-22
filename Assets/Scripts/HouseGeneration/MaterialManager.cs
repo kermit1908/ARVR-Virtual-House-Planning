@@ -17,7 +17,7 @@ namespace HousePlanner.HouseGeneration
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<MaterialManager>();
+                    _instance = FindObjectOfType<MaterialManager>();
                     if (_instance == null)
                     {
                         GameObject go = new GameObject("MaterialManager");

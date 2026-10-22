@@ -33,6 +33,15 @@ namespace HousePlanner.Core
         /// <summary>Returns a <see cref="Vector2Serializable"/> with all components set to one.</summary>
         public static Vector2Serializable One => new Vector2Serializable(1f, 1f);
 
+        /// <summary>Returns the normalized vector as a Unity Vector2.</summary>
+        public Vector2 normalized => ((Vector2)this).normalized;
+
+        /// <summary>Returns the length of this vector.</summary>
+        public float magnitude => ((Vector2)this).magnitude;
+
+        /// <summary>Returns the squared length of this vector.</summary>
+        public float sqrMagnitude => ((Vector2)this).sqrMagnitude;
+
         /// <summary>
         /// Implicitly converts a <see cref="Vector2Serializable"/> to a Unity <see cref="Vector2"/>.
         /// </summary>
@@ -48,6 +57,34 @@ namespace HousePlanner.Core
         {
             return new Vector2Serializable(v.x, v.y);
         }
+
+        // --- Operator Overloads ---
+        public static Vector2Serializable operator +(Vector2Serializable a, Vector2Serializable b)
+            => new Vector2Serializable(a.x + b.x, a.y + b.y);
+
+        public static Vector2Serializable operator -(Vector2Serializable a, Vector2Serializable b)
+            => new Vector2Serializable(a.x - b.x, a.y - b.y);
+
+        public static Vector2Serializable operator *(Vector2Serializable a, float d)
+            => new Vector2Serializable(a.x * d, a.y * d);
+
+        public static Vector2Serializable operator *(float d, Vector2Serializable a)
+            => new Vector2Serializable(a.x * d, a.y * d);
+
+        public static Vector2Serializable operator /(Vector2Serializable a, float d)
+            => new Vector2Serializable(a.x / d, a.y / d);
+
+        public static Vector2 operator +(Vector2Serializable a, Vector2 b)
+            => new Vector2(a.x + b.x, a.y + b.y);
+
+        public static Vector2 operator +(Vector2 a, Vector2Serializable b)
+            => new Vector2(a.x + b.x, a.y + b.y);
+
+        public static Vector2 operator -(Vector2Serializable a, Vector2 b)
+            => new Vector2(a.x - b.x, a.y - b.y);
+
+        public static Vector2 operator -(Vector2 a, Vector2Serializable b)
+            => new Vector2(a.x - b.x, a.y - b.y);
 
         /// <inheritdoc/>
         public override string ToString()
@@ -106,6 +143,15 @@ namespace HousePlanner.Core
         /// <summary>Returns a <see cref="Vector3Serializable"/> with all components set to one.</summary>
         public static Vector3Serializable One => new Vector3Serializable(1f, 1f, 1f);
 
+        /// <summary>Returns the normalized vector as a Unity Vector3.</summary>
+        public Vector3 normalized => ((Vector3)this).normalized;
+
+        /// <summary>Returns the length of this vector.</summary>
+        public float magnitude => ((Vector3)this).magnitude;
+
+        /// <summary>Returns the squared length of this vector.</summary>
+        public float sqrMagnitude => ((Vector3)this).sqrMagnitude;
+
         /// <summary>
         /// Implicitly converts a <see cref="Vector3Serializable"/> to a Unity <see cref="Vector3"/>.
         /// </summary>
@@ -121,6 +167,34 @@ namespace HousePlanner.Core
         {
             return new Vector3Serializable(v.x, v.y, v.z);
         }
+
+        // --- Operator Overloads ---
+        public static Vector3Serializable operator +(Vector3Serializable a, Vector3Serializable b)
+            => new Vector3Serializable(a.x + b.x, a.y + b.y, a.z + b.z);
+
+        public static Vector3Serializable operator -(Vector3Serializable a, Vector3Serializable b)
+            => new Vector3Serializable(a.x - b.x, a.y - b.y, a.z - b.z);
+
+        public static Vector3Serializable operator *(Vector3Serializable a, float d)
+            => new Vector3Serializable(a.x * d, a.y * d, a.z * d);
+
+        public static Vector3Serializable operator *(float d, Vector3Serializable a)
+            => new Vector3Serializable(a.x * d, a.y * d, a.z * d);
+
+        public static Vector3Serializable operator /(Vector3Serializable a, float d)
+            => new Vector3Serializable(a.x / d, a.y / d, a.z / d);
+
+        public static Vector3 operator +(Vector3Serializable a, Vector3 b)
+            => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+
+        public static Vector3 operator +(Vector3 a, Vector3Serializable b)
+            => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+
+        public static Vector3 operator +(Vector3Serializable a, Vector2 b)
+            => new Vector3(a.x + b.x, a.y, a.z + b.y);
+
+        public static Vector3 operator +(Vector2 a, Vector3Serializable b)
+            => new Vector3(a.x + b.x, b.y, a.y + b.z);
 
         /// <inheritdoc/>
         public override string ToString()
@@ -198,15 +272,11 @@ namespace HousePlanner.Core
 
         /// <summary>
         /// Creates a <see cref="ColorSerializable"/> from a hexadecimal color string.
-        /// Supports formats: "#RRGGBB", "#RRGGBBAA", "RRGGBB", "RRGGBBAA".
         /// </summary>
-        /// <param name="hex">The hex color string to parse.</param>
-        /// <returns>The parsed color, or white if parsing fails.</returns>
         public static ColorSerializable FromHex(string hex)
         {
             if (string.IsNullOrEmpty(hex))
             {
-                Debug.LogWarning("[ColorSerializable] Null or empty hex string, returning white.");
                 return new ColorSerializable(1f, 1f, 1f, 1f);
             }
 
@@ -214,7 +284,6 @@ namespace HousePlanner.Core
 
             if (cleaned.Length != 6 && cleaned.Length != 8)
             {
-                Debug.LogWarning($"[ColorSerializable] Invalid hex format '{hex}', returning white.");
                 return new ColorSerializable(1f, 1f, 1f, 1f);
             }
 
@@ -231,8 +300,6 @@ namespace HousePlanner.Core
         /// <summary>
         /// Converts a Unity <see cref="Color"/> to a hexadecimal string in "#RRGGBB" format.
         /// </summary>
-        /// <param name="color">The color to convert.</param>
-        /// <returns>A hex string representation of the color.</returns>
         public static string ToHex(Color color)
         {
             int r = Mathf.RoundToInt(color.r * 255f);

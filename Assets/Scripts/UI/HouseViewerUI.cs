@@ -45,8 +45,8 @@ namespace HousePlanner.UI
 
         private void Start()
         {
-            if (_houseGenerator == null) _houseGenerator = FindFirstObjectByType<HouseGenerator>();
-            if (_viewCamera == null) _viewCamera = FindFirstObjectByType<HouseViewCamera>();
+            if (_houseGenerator == null) _houseGenerator = FindObjectOfType<HouseGenerator>();
+            if (_viewCamera == null) _viewCamera = FindObjectOfType<HouseViewCamera>();
 
             SetupListeners();
             InitializeHouse();

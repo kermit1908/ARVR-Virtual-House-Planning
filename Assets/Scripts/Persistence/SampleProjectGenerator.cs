@@ -6,23 +6,33 @@ using HousePlanner.Core;
 namespace HousePlanner.Persistence
 {
     /// <summary>
-    /// Static utility that generates a fully-populated sample
-    /// <see cref="ProjectData"/> for testing and first-launch demos.
-    /// The sample represents an L-shaped home with four rooms, walls,
-    /// door/window openings, and representative furniture.
+    /// Static utility that generates a fully-populated sample <see cref="ProjectData"/>
+    /// for testing and first-launch demos.
+    /// Represents an L-shaped home with four rooms, walls, door/window openings, and furniture.
     /// </summary>
     public static class SampleProjectGenerator
     {
-        // -----------------------------------------------------------------------
-        // Public API
-        // -----------------------------------------------------------------------
-
-        /// <summary>
-        /// Creates and returns a complete sample project.
-        /// </summary>
-        /// <returns>A ready-to-save <see cref="ProjectData"/>.</returns>
         public static ProjectData CreateSampleProject()
         {
+            // First check if Resources/SampleProject exists
+            TextAsset sampleAsset = UnityEngine.Resources.Load<TextAsset>("SampleProject");
+            if (sampleAsset != null && !string.IsNullOrEmpty(sampleAsset.text))
+            {
+                try
+                {
+                    ProjectData fromJson = JsonUtility.FromJson<ProjectData>(sampleAsset.text);
+                    if (fromJson != null && fromJson.rooms != null && fromJson.rooms.Count > 0)
+                    {
+                        return fromJson;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[SampleProjectGenerator] Failed to parse SampleProject.json: {ex.Message}");
+                }
+            }
+
+            // Fallback: Build programmatically
             ProjectData project = new ProjectData
             {
                 projectId = Guid.NewGuid().ToString(),
@@ -30,241 +40,145 @@ namespace HousePlanner.Persistence
                 schemaVersion = SchemaVersionUpgrader.CurrentVersion,
                 createdAtIso = DateTime.UtcNow.ToString("o"),
                 modifiedAtIso = DateTime.UtcNow.ToString("o"),
-                rooms = new List<RoomData>()
+                rooms = new List<RoomData>(),
+                furnitureItems = new List<FurnitureItemData>()
             };
 
-            // -----------------------------------------------------------------
-            // Room layout  (L-shaped, origin at bottom-left)
-            //
-            //   Y
-            //   7.5 ┌────────────┐
-            //       │  Kitchen   │
-            //   4.0 ├────────────┤───────────┐
-            //       │            │           │
-            //       │ Living Rm  │  Bedroom  │
-            //   0   └────────────┴───────────┘
-            //       0          5.0         9.0    X
-            //
-            //   Bathroom is stacked above Kitchen:
-            //   9.5 ┌──────┐
-            //       │ Bath │
-            //   7.5 └──────┘
-            //       0     2.5
-            // -----------------------------------------------------------------
+            // Living Room (5x4m)
+            RoomData living = new RoomData
+            {
+                roomId = "room_living",
+                roomName = "Living Room",
+                roomType = RoomType.LivingRoom,
+                width = 5f,
+                length = 4f,
+                height = 2.8f,
+                position = new Vector2Serializable(0f, 0f),
+                wallColor = "#F0EFEA",
+                floorMaterial = "wood",
+                walls = new List<WallData>()
+            };
+            living.walls.Add(CreateWall("lr_w1", 0f, 0f, 5f, 0f, OpeningType.Door, 0.5f, 0.9f, 2.1f, 0f));
+            living.walls.Add(CreateWall("lr_w2", 5f, 0f, 5f, 4f, OpeningType.Window, 0.5f, 1.4f, 1.2f, 0.9f));
+            living.walls.Add(CreateWall("lr_w3", 5f, 4f, 0f, 4f));
+            living.walls.Add(CreateWall("lr_w4", 0f, 4f, 0f, 0f));
+            project.rooms.Add(living);
 
-            RoomData livingRoom = CreateLivingRoom();
-            RoomData bedroom = CreateBedroom();
-            RoomData kitchen = CreateKitchen();
-            RoomData bathroom = CreateBathroom();
-
-            project.rooms.Add(livingRoom);
-            project.rooms.Add(bedroom);
+            // Kitchen (3x3m)
+            RoomData kitchen = new RoomData
+            {
+                roomId = "room_kitchen",
+                roomName = "Kitchen",
+                roomType = RoomType.Kitchen,
+                width = 3f,
+                length = 3f,
+                height = 2.8f,
+                position = new Vector2Serializable(5f, 0f),
+                wallColor = "#E8ECEF",
+                floorMaterial = "tile",
+                walls = new List<WallData>()
+            };
+            kitchen.walls.Add(CreateWall("ki_w1", 0f, 0f, 3f, 0f));
+            kitchen.walls.Add(CreateWall("ki_w2", 3f, 0f, 3f, 3f));
+            kitchen.walls.Add(CreateWall("ki_w3", 3f, 3f, 0f, 3f));
+            kitchen.walls.Add(CreateWall("ki_w4", 0f, 3f, 0f, 0f));
             project.rooms.Add(kitchen);
+
+            // Bedroom (4x3.5m)
+            RoomData bedroom = new RoomData
+            {
+                roomId = "room_bedroom",
+                roomName = "Bedroom",
+                roomType = RoomType.Bedroom,
+                width = 4f,
+                length = 3.5f,
+                height = 2.8f,
+                position = new Vector2Serializable(0f, 4f),
+                wallColor = "#E2E8F0",
+                floorMaterial = "wood",
+                walls = new List<WallData>()
+            };
+            bedroom.walls.Add(CreateWall("br_w1", 0f, 0f, 4f, 0f));
+            bedroom.walls.Add(CreateWall("br_w2", 4f, 0f, 4f, 3.5f));
+            bedroom.walls.Add(CreateWall("br_w3", 4f, 3.5f, 0f, 3.5f, OpeningType.Window, 0.5f, 1.4f, 1.2f, 0.9f));
+            bedroom.walls.Add(CreateWall("br_w4", 0f, 3.5f, 0f, 0f));
+            project.rooms.Add(bedroom);
+
+            // Bathroom (2.5x2m)
+            RoomData bathroom = new RoomData
+            {
+                roomId = "room_bathroom",
+                roomName = "Bathroom",
+                roomType = RoomType.Bathroom,
+                width = 2.5f,
+                length = 2f,
+                height = 2.8f,
+                position = new Vector2Serializable(4f, 4f),
+                wallColor = "#CBD5E1",
+                floorMaterial = "tile",
+                walls = new List<WallData>()
+            };
+            bathroom.walls.Add(CreateWall("ba_w1", 0f, 0f, 2.5f, 0f));
+            bathroom.walls.Add(CreateWall("ba_w2", 2.5f, 0f, 2.5f, 2f));
+            bathroom.walls.Add(CreateWall("ba_w3", 2.5f, 2f, 0f, 2f));
+            bathroom.walls.Add(CreateWall("ba_w4", 0f, 2f, 0f, 0f));
             project.rooms.Add(bathroom);
+
+            // Add furniture items
+            project.furnitureItems.Add(CreateFurniture("Sofa", "Living Room Sofa", new Vector3(2.5f, 0f, 1.5f), Vector3.zero, "#2B6CB0"));
+            project.furnitureItems.Add(CreateFurniture("CoffeeTable", "Coffee Table", new Vector3(2.5f, 0f, 2.4f), Vector3.zero, "#8B5A2B"));
+            project.furnitureItems.Add(CreateFurniture("TV", "Media TV", new Vector3(2.5f, 0f, 3.8f), new Vector3(0f, 180f, 0f), "#1A202C"));
+            project.furnitureItems.Add(CreateFurniture("Bed_Double", "Double Bed", new Vector3(2f, 0f, 5.5f), Vector3.zero, "#E2E8F0"));
+            project.furnitureItems.Add(CreateFurniture("KitchenCounter", "Kitchen Counter", new Vector3(6.5f, 0f, 0.6f), Vector3.zero, "#F7FAFC"));
+            project.furnitureItems.Add(CreateFurniture("Refrigerator", "Fridge", new Vector3(7.5f, 0f, 2.2f), new Vector3(0f, 90f, 0f), "#CBD5E0"));
+            project.furnitureItems.Add(CreateFurniture("Toilet", "Toilet", new Vector3(5.8f, 0f, 5.5f), new Vector3(0f, 180f, 0f), "#FFFFFF"));
+            project.furnitureItems.Add(CreateFurniture("Bathtub", "Bathtub", new Vector3(4.5f, 0f, 4.5f), new Vector3(0f, 90f, 0f), "#FFFFFF"));
 
             return project;
         }
 
-        // -----------------------------------------------------------------------
-        // Room builders
-        // -----------------------------------------------------------------------
-
-        /// <summary>Living Room – 5 × 4 m at origin (0, 0).</summary>
-        private static RoomData CreateLivingRoom()
+        private static WallData CreateWall(string id, float startX, float startY, float endX, float endY,
+            OpeningType? opType = null, float opPos = 0.5f, float opW = 0.9f, float opH = 2.1f, float opElev = 0f)
         {
-            RoomData room = new RoomData
-            {
-                roomId = Guid.NewGuid().ToString(),
-                roomName = "Living Room",
-                roomType = "Living",
-                positionX = 0f,
-                positionY = 0f,
-                width = 5f,
-                height = 4f,
-                wallColor = "#F5F0E8",     // warm off-white
-                floorMaterial = "Hardwood",
-                walls = new List<WallData>(),
-                openings = new List<OpeningData>(),
-                furniture = new List<FurnitureData>()
-            };
-
-            // Walls – defined clockwise from bottom-left.
-            room.walls.Add(MakeWall("lr_south", 0f, 0f, 5f, 0f));      // south
-            room.walls.Add(MakeWall("lr_east",  5f, 0f, 5f, 4f));      // east  (shared with bedroom)
-            room.walls.Add(MakeWall("lr_north", 5f, 4f, 0f, 4f));      // north (shared with kitchen)
-            room.walls.Add(MakeWall("lr_west",  0f, 4f, 0f, 0f));      // west
-
-            // Openings.
-            room.openings.Add(MakeOpening("lr_door_bedroom",  "Door",   "lr_east",  0.5f, 0.9f));
-            room.openings.Add(MakeOpening("lr_door_kitchen",  "Door",   "lr_north", 0.3f, 0.9f));
-            room.openings.Add(MakeOpening("lr_window_south",  "Window", "lr_south", 0.4f, 1.2f));
-            room.openings.Add(MakeOpening("lr_window_west",   "Window", "lr_west",  0.5f, 1.0f));
-
-            // Furniture.
-            room.furniture.Add(MakeFurniture("lr_sofa",  "Sofa",  1.0f, 2.0f, 2.0f, 0.9f, 0f));
-            room.furniture.Add(MakeFurniture("lr_table", "Coffee Table", 2.0f, 1.5f, 1.0f, 0.6f, 0f));
-
-            return room;
-        }
-
-        /// <summary>Bedroom – 4 × 3.5 m placed to the right of the living room.</summary>
-        private static RoomData CreateBedroom()
-        {
-            RoomData room = new RoomData
-            {
-                roomId = Guid.NewGuid().ToString(),
-                roomName = "Bedroom",
-                roomType = "Bedroom",
-                positionX = 5f,
-                positionY = 0f,
-                width = 4f,
-                height = 3.5f,
-                wallColor = "#D6E5F3",     // soft blue
-                floorMaterial = "Carpet",
-                walls = new List<WallData>(),
-                openings = new List<OpeningData>(),
-                furniture = new List<FurnitureData>()
-            };
-
-            room.walls.Add(MakeWall("br_south", 5f, 0f,  9f, 0f));
-            room.walls.Add(MakeWall("br_east",  9f, 0f,  9f, 3.5f));
-            room.walls.Add(MakeWall("br_north", 9f, 3.5f, 5f, 3.5f));
-            room.walls.Add(MakeWall("br_west",  5f, 3.5f, 5f, 0f));  // shared with living room
-
-            room.openings.Add(MakeOpening("br_door_living", "Door",   "br_west",  0.5f, 0.9f));
-            room.openings.Add(MakeOpening("br_window_east", "Window", "br_east",  0.4f, 1.2f));
-            room.openings.Add(MakeOpening("br_window_south","Window", "br_south", 0.5f, 1.0f));
-
-            room.furniture.Add(MakeFurniture("br_bed",      "Bed",      6.0f, 1.0f, 2.0f, 1.8f, 0f));
-            room.furniture.Add(MakeFurniture("br_wardrobe", "Wardrobe", 8.0f, 0.3f, 1.0f, 0.6f, 0f));
-
-            return room;
-        }
-
-        /// <summary>Kitchen – 3 × 3 m placed above the living room (left column).</summary>
-        private static RoomData CreateKitchen()
-        {
-            RoomData room = new RoomData
-            {
-                roomId = Guid.NewGuid().ToString(),
-                roomName = "Kitchen",
-                roomType = "Kitchen",
-                positionX = 0f,
-                positionY = 4f,
-                width = 5f,
-                height = 3f,
-                wallColor = "#FFF8E1",     // light yellow
-                floorMaterial = "Tile",
-                walls = new List<WallData>(),
-                openings = new List<OpeningData>(),
-                furniture = new List<FurnitureData>()
-            };
-
-            room.walls.Add(MakeWall("ki_south", 0f, 4f, 5f, 4f));   // shared with living room
-            room.walls.Add(MakeWall("ki_east",  5f, 4f, 5f, 7f));
-            room.walls.Add(MakeWall("ki_north", 5f, 7f, 0f, 7f));
-            room.walls.Add(MakeWall("ki_west",  0f, 7f, 0f, 4f));
-
-            room.openings.Add(MakeOpening("ki_door_living",  "Door",   "ki_south", 0.3f, 0.9f));
-            room.openings.Add(MakeOpening("ki_window_north", "Window", "ki_north", 0.5f, 1.0f));
-            room.openings.Add(MakeOpening("ki_window_west",  "Window", "ki_west",  0.5f, 0.8f));
-            room.openings.Add(MakeOpening("ki_door_bath",    "Door",   "ki_north", 0.1f, 0.8f));
-
-            room.furniture.Add(MakeFurniture("ki_counter", "Kitchen Counter", 0.3f, 4.3f, 4.0f, 0.6f, 0f));
-            room.furniture.Add(MakeFurniture("ki_fridge",  "Refrigerator",    4.2f, 4.3f, 0.7f, 0.7f, 0f));
-
-            return room;
-        }
-
-        /// <summary>Bathroom – 2.5 × 2 m placed above the kitchen (top-left).</summary>
-        private static RoomData CreateBathroom()
-        {
-            RoomData room = new RoomData
-            {
-                roomId = Guid.NewGuid().ToString(),
-                roomName = "Bathroom",
-                roomType = "Bathroom",
-                positionX = 0f,
-                positionY = 7f,
-                width = 2.5f,
-                height = 2f,
-                wallColor = "#E0F2F1",     // pale teal
-                floorMaterial = "Tile",
-                walls = new List<WallData>(),
-                openings = new List<OpeningData>(),
-                furniture = new List<FurnitureData>()
-            };
-
-            room.walls.Add(MakeWall("ba_south", 0f,   7f,  2.5f, 7f));  // shared with kitchen
-            room.walls.Add(MakeWall("ba_east",  2.5f, 7f,  2.5f, 9f));
-            room.walls.Add(MakeWall("ba_north", 2.5f, 9f,  0f,   9f));
-            room.walls.Add(MakeWall("ba_west",  0f,   9f,  0f,   7f));
-
-            room.openings.Add(MakeOpening("ba_door_kitchen", "Door",   "ba_south", 0.5f, 0.8f));
-            room.openings.Add(MakeOpening("ba_window_north", "Window", "ba_north", 0.4f, 0.6f));
-
-            room.furniture.Add(MakeFurniture("ba_toilet",  "Toilet",  0.3f, 7.3f, 0.5f, 0.4f, 0f));
-            room.furniture.Add(MakeFurniture("ba_sink",    "Sink",    1.2f, 7.3f, 0.5f, 0.4f, 0f));
-            room.furniture.Add(MakeFurniture("ba_bathtub", "Bathtub", 0.3f, 8.0f, 1.7f, 0.7f, 0f));
-
-            return room;
-        }
-
-        // -----------------------------------------------------------------------
-        // Factory helpers
-        // -----------------------------------------------------------------------
-
-        /// <summary>Creates a <see cref="WallData"/> between two 2-D points.</summary>
-        private static WallData MakeWall(string id,
-            float startX, float startY, float endX, float endY)
-        {
-            return new WallData
+            WallData wall = new WallData
             {
                 wallId = id,
-                startX = startX,
-                startY = startY,
-                endX = endX,
-                endY = endY,
+                startPoint = new Vector2Serializable(startX, startY),
+                endPoint = new Vector2Serializable(endX, endY),
+                height = 2.8f,
                 thickness = 0.15f,
-                wallHeight = 2.8f
+                materialColor = "#F0EFEA",
+                openings = new List<WallOpeningData>()
             };
+
+            if (opType.HasValue)
+            {
+                wall.openings.Add(new WallOpeningData
+                {
+                    id = $"{id}_op",
+                    openingType = opType.Value,
+                    position = opPos,
+                    width = opW,
+                    height = opH,
+                    elevation = opElev,
+                    parentWallId = id
+                });
+            }
+
+            return wall;
         }
 
-        /// <summary>
-        /// Creates an <see cref="OpeningData"/> (door or window) on a wall.
-        /// <paramref name="normalizedPosition"/> is 0-1 along the wall length.
-        /// </summary>
-        private static OpeningData MakeOpening(string id, string type,
-            string wallId, float normalizedPosition, float openingWidth)
+        private static FurnitureItemData CreateFurniture(string catId, string name, Vector3 pos, Vector3 rot, string color)
         {
-            bool isDoor = type == "Door";
-            return new OpeningData
+            return new FurnitureItemData
             {
-                openingId = id,
-                openingType = type,
-                wallId = wallId,
-                normalizedPosition = normalizedPosition,
-                openingWidth = openingWidth,
-                openingHeight = isDoor ? 2.1f : 1.0f,
-                sillHeight = isDoor ? 0f : 0.9f
-            };
-        }
-
-        /// <summary>
-        /// Creates a <see cref="FurnitureData"/> item positioned in world space.
-        /// </summary>
-        private static FurnitureData MakeFurniture(string id, string furnitureName,
-            float posX, float posY, float sizeX, float sizeY, float rotation)
-        {
-            return new FurnitureData
-            {
-                furnitureId = id,
-                furnitureName = furnitureName,
-                positionX = posX,
-                positionY = posY,
-                sizeX = sizeX,
-                sizeY = sizeY,
-                rotation = rotation
+                instanceId = Guid.NewGuid().ToString(),
+                catalogueId = catId,
+                customName = name,
+                position = pos,
+                rotation = rot,
+                scale = Vector3.one,
+                materialColor = color
             };
         }
     }

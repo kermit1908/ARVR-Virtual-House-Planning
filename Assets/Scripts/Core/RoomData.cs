@@ -9,25 +9,16 @@ namespace HousePlanner.Core
     /// </summary>
     public enum RoomType
     {
-        /// <summary>A general-purpose living room.</summary>
         LivingRoom,
-
-        /// <summary>A bedroom for sleeping.</summary>
         Bedroom,
-
-        /// <summary>A kitchen for cooking.</summary>
         Kitchen,
-
-        /// <summary>A bathroom with plumbing fixtures.</summary>
         Bathroom,
-
-        /// <summary>A hallway or corridor connecting rooms.</summary>
         Hallway,
-
-        /// <summary>A garage for vehicle storage.</summary>
         Garage,
-
-        /// <summary>A user-defined custom room type.</summary>
+        DiningRoom,
+        Office,
+        Storage,
+        Balcony,
         Custom
     }
 
@@ -50,7 +41,7 @@ namespace HousePlanner.Core
         /// <summary>Width of the room in meters (X axis).</summary>
         public float width;
 
-        /// <summary>Length of the room in meters (Z axis).</summary>
+        /// <summary>Length of the room in meters (Z axis or floorplan Y axis).</summary>
         public float length;
 
         /// <summary>Height of the room in meters (Y axis).</summary>
@@ -74,10 +65,56 @@ namespace HousePlanner.Core
         /// <summary>Hex colour string for the ceiling (e.g. "#F5F5F5").</summary>
         public string ceilingColor = "#F5F5F5";
 
+        /// <summary>Floor height / elevation in meters.</summary>
+        public float floorHeight = 0f;
+
+        /// <summary>2D floor plan fill color.</summary>
+        public Color fillColor = new Color(0.9f, 0.9f, 0.85f, 0.4f);
+
+        /// <summary>Furniture placed in this room.</summary>
+        public List<FurnitureItemData> furniture = new List<FurnitureItemData>();
+
+        /// <summary>Direct openings list (if stored per-room).</summary>
+        public List<WallOpeningData> openings = new List<WallOpeningData>();
+
+        // --- Compatibility Properties ---
+        public Vector2 size
+        {
+            get => new Vector2(width, length);
+            set
+            {
+                width = value.x;
+                length = value.y;
+            }
+        }
+
+        public float ceilingHeight
+        {
+            get => height;
+            set => height = value;
+        }
+
+        public float positionX
+        {
+            get => position.x;
+            set => position = new Vector2Serializable(value, position.y);
+        }
+
+        public float positionY
+        {
+            get => position.y;
+            set => position = new Vector2Serializable(position.x, value);
+        }
+
+        public string floorMaterialId
+        {
+            get => floorMaterial;
+            set => floorMaterial = value;
+        }
+
         /// <summary>
         /// Calculates the floor area of the room in square meters.
         /// </summary>
-        /// <returns>The area (width × length).</returns>
         public float GetArea()
         {
             return width * length;
@@ -86,7 +123,6 @@ namespace HousePlanner.Core
         /// <summary>
         /// Calculates the perimeter of the room in meters.
         /// </summary>
-        /// <returns>The perimeter (2 × (width + length)).</returns>
         public float GetPerimeter()
         {
             return 2f * (width + length);
@@ -95,7 +131,6 @@ namespace HousePlanner.Core
         /// <summary>
         /// Validates all room data including dimensions and child wall data.
         /// </summary>
-        /// <returns><c>true</c> if all data is valid; otherwise <c>false</c>.</returns>
         public bool Validate()
         {
             bool isValid = true;
@@ -128,42 +163,6 @@ namespace HousePlanner.Core
             {
                 Debug.LogWarning($"[RoomData:{roomId}] height must be positive, got {height}.");
                 isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(floorMaterial))
-            {
-                Debug.LogWarning($"[RoomData:{roomId}] floorMaterial is empty.");
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(wallColor))
-            {
-                Debug.LogWarning($"[RoomData:{roomId}] wallColor is empty.");
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(ceilingColor))
-            {
-                Debug.LogWarning($"[RoomData:{roomId}] ceilingColor is empty.");
-                isValid = false;
-            }
-
-            if (walls != null)
-            {
-                foreach (var wall in walls)
-                {
-                    if (wall == null)
-                    {
-                        Debug.LogWarning($"[RoomData:{roomId}] Contains a null wall entry.");
-                        isValid = false;
-                        continue;
-                    }
-
-                    if (!wall.Validate())
-                    {
-                        isValid = false;
-                    }
-                }
             }
 
             return isValid;

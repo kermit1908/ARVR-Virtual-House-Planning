@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 namespace HousePlanner.AR
 {
@@ -33,9 +32,9 @@ namespace HousePlanner.AR
         [SerializeField] private ARHousePreview housePreview;
 
         [Header("UI Elements – Text")]
-        [SerializeField] private TMP_Text statusText;
-        [SerializeField] private TMP_Text instructionText;
-        [SerializeField] private TMP_Text scaleLabel;
+        [SerializeField] private Text statusText;
+        [SerializeField] private Text instructionText;
+        [SerializeField] private Text scaleLabel;
 
         [Header("UI Elements – Buttons")]
         [SerializeField] private Button tapToPlaceButton;

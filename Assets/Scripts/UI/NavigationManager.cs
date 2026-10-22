@@ -19,7 +19,7 @@ namespace HousePlanner.UI
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<NavigationManager>();
+                    _instance = FindObjectOfType<NavigationManager>();
                     if (_instance == null)
                     {
                         GameObject go = new GameObject("NavigationManager");

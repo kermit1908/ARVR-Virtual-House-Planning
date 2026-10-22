@@ -41,6 +41,19 @@ namespace HousePlanner.Core
         /// </summary>
         public string modifiedAt;
 
+        // --- Compatibility Aliases ---
+        public string createdAtIso
+        {
+            get => createdAt;
+            set => createdAt = value;
+        }
+
+        public string modifiedAtIso
+        {
+            get => modifiedAt;
+            set => modifiedAt = value;
+        }
+
         /// <summary>
         /// Schema version number used for migration and compatibility.
         /// </summary>

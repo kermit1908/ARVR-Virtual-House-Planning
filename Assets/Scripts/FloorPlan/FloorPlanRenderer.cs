@@ -433,7 +433,7 @@ namespace HousePlanner.FloorPlan
             if (item == null || _glMaterial == null) return;
 
             Vector2 halfSize = item.footprintSize * 0.5f;
-            float rad = item.rotation * Mathf.Deg2Rad;
+            float rad = item.rotation.y * Mathf.Deg2Rad;
             float cos = Mathf.Cos(rad);
             float sin = Mathf.Sin(rad);
 
@@ -459,7 +459,7 @@ namespace HousePlanner.FloorPlan
                     localCorners[i].x * cos - localCorners[i].y * sin,
                     localCorners[i].x * sin + localCorners[i].y * cos
                 );
-                Vector2 world = item.position + rotated;
+                Vector2 world = new Vector2(item.position.x, item.position.z) + rotated;
                 GL.Vertex3(world.x, 0.004f, world.y);
             }
             GL.End();

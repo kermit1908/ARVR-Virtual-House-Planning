@@ -8,115 +8,130 @@ namespace HousePlanner.Core
     /// </summary>
     public enum FurnitureCategory
     {
-        /// <summary>Chairs, sofas, and other seating.</summary>
         Seating,
-
-        /// <summary>Beds, mattresses, and sleeping furniture.</summary>
         Bed,
-
-        /// <summary>Tables, desks, and countertops.</summary>
         Table,
-
-        /// <summary>Wardrobes, shelves, cabinets, and storage units.</summary>
         Storage,
-
-        /// <summary>Kitchen-specific fixtures and appliances.</summary>
         Kitchen,
-
-        /// <summary>Bathroom-specific fixtures such as sinks, toilets, and tubs.</summary>
         Bathroom,
-
-        /// <summary>Lamps, ceiling lights, and other light fixtures.</summary>
         Lighting,
-
-        /// <summary>Decorative items such as plants, artwork, and rugs.</summary>
         Decorative,
-
-        /// <summary>Door elements that can be placed as furniture items.</summary>
         Door,
-
-        /// <summary>Window elements that can be placed as furniture items.</summary>
-        Window
+        Window,
+        Electronics,
+        Decor,
+        Other
     }
 
     /// <summary>
     /// Serializable data for a single furniture instance placed within the house plan.
-    /// References a catalogue entry via <see cref="catalogueId"/> and is optionally
-    /// assigned to a room via <see cref="roomId"/>.
     /// </summary>
     [Serializable]
     public class FurnitureItemData
     {
-        /// <summary>Unique instance identifier for this placed furniture item.</summary>
+        /// <summary>Unique instance identifier.</summary>
         public string instanceId;
 
-        /// <summary>
-        /// Identifier referencing the furniture catalogue entry that defines
-        /// the 3D model, default dimensions, and metadata.
-        /// </summary>
+        /// <summary>Catalogue entry identifier.</summary>
         public string catalogueId;
 
-        /// <summary>
-        /// Identifier of the room this item belongs to.
-        /// Empty or null if the item is unassigned / floating.
-        /// </summary>
+        /// <summary>Identifier of the room this item belongs to.</summary>
         public string roomId;
 
-        /// <summary>Functional category of this furniture item.</summary>
+        /// <summary>Functional category.</summary>
         public FurnitureCategory category;
 
-        /// <summary>World-space position of the item in meters.</summary>
+        /// <summary>World-space position in meters.</summary>
         public Vector3Serializable position;
 
-        /// <summary>Euler rotation of the item in degrees.</summary>
+        /// <summary>Euler rotation in degrees.</summary>
         public Vector3Serializable rotation;
 
-        /// <summary>Scale multiplier of the item (default 1,1,1).</summary>
+        /// <summary>Scale multiplier (default 1,1,1).</summary>
         public Vector3Serializable scale = Vector3Serializable.One;
 
-        /// <summary>Material / paint colour as a hex string (e.g. "#8B4513").</summary>
+        /// <summary>Material / paint colour hex string.</summary>
         public string materialColor = "#FFFFFF";
 
-        /// <summary>Optional user-defined display name for this item.</summary>
+        /// <summary>Display name.</summary>
         public string customName;
 
-        /// <summary>
-        /// Validates the furniture item data.
-        /// </summary>
-        /// <returns><c>true</c> if all required fields are valid; otherwise <c>false</c>.</returns>
+        /// <summary>2D footprint size in meters.</summary>
+        public Vector2 footprintSize = new Vector2(1f, 1f);
+
+        // --- Compatibility Aliases ---
+        public string itemId
+        {
+            get => instanceId;
+            set => instanceId = value;
+        }
+
+        public string itemName
+        {
+            get => customName;
+            set => customName = value;
+        }
+
+        public string catalogId
+        {
+            get => catalogueId;
+            set => catalogueId = value;
+        }
+
+        public string parentRoomId
+        {
+            get => roomId;
+            set => roomId = value;
+        }
+
+        public string furnitureId
+        {
+            get => instanceId;
+            set => instanceId = value;
+        }
+
+        public string furnitureName
+        {
+            get => customName;
+            set => customName = value;
+        }
+
+        public float positionX
+        {
+            get => position.x;
+            set => position = new Vector3Serializable(value, position.y, position.z);
+        }
+
+        public float positionY
+        {
+            get => position.z;
+            set => position = new Vector3Serializable(position.x, position.y, value);
+        }
+
+        public float sizeX
+        {
+            get => scale.x;
+            set => scale = new Vector3Serializable(value, scale.y, scale.z);
+        }
+
+        public float sizeY
+        {
+            get => scale.z;
+            set => scale = new Vector3Serializable(scale.x, scale.y, value);
+        }
+
         public bool Validate()
         {
-            bool isValid = true;
-
-            if (string.IsNullOrWhiteSpace(instanceId))
-            {
-                Debug.LogWarning("[FurnitureItemData] instanceId is null or empty.");
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(catalogueId))
-            {
-                Debug.LogWarning($"[FurnitureItemData:{instanceId}] catalogueId is null or empty.");
-                isValid = false;
-            }
-
-            // roomId is intentionally nullable – unassigned items are allowed.
-
-            Vector3 s = scale;
-            if (s.x <= 0f || s.y <= 0f || s.z <= 0f)
-            {
-                Debug.LogWarning(
-                    $"[FurnitureItemData:{instanceId}] Scale components must be positive, got {scale}.");
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(materialColor))
-            {
-                Debug.LogWarning($"[FurnitureItemData:{instanceId}] materialColor is empty.");
-                isValid = false;
-            }
-
-            return isValid;
+            if (string.IsNullOrWhiteSpace(instanceId)) return false;
+            return true;
         }
+    }
+
+    /// <summary>
+    /// Alias class for backward compatibility with subagent code.
+    /// </summary>
+    [Serializable]
+    public class FurnitureData : FurnitureItemData
+    {
     }
 }

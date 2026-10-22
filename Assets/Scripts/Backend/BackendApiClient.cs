@@ -22,7 +22,7 @@ namespace HousePlanner.Backend
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<BackendApiClient>();
+                    _instance = FindObjectOfType<BackendApiClient>();
                     if (_instance == null)
                     {
                         GameObject go = new GameObject("BackendApiClient");

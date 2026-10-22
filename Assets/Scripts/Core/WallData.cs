@@ -9,11 +9,10 @@ namespace HousePlanner.Core
     /// </summary>
     public enum OpeningType
     {
-        /// <summary>A standard door opening.</summary>
         Door,
-
-        /// <summary>A window opening.</summary>
-        Window
+        Window,
+        Archway,
+        SlidingDoor
     }
 
     /// <summary>
@@ -29,68 +28,84 @@ namespace HousePlanner.Core
         public OpeningType openingType;
 
         /// <summary>
-        /// Normalised position along the wall (0 = start, 1 = end)
-        /// indicating the centre of the opening.
+        /// Normalised position along the wall (0 = start, 1 = end).
         /// </summary>
         public float position;
 
         /// <summary>Width of the opening in meters.</summary>
-        public float width;
+        public float width = 0.9f;
 
         /// <summary>Height of the opening in meters.</summary>
-        public float height;
+        public float height = 2.1f;
 
-        /// <summary>
-        /// Elevation of the bottom edge of the opening from the floor in meters.
-        /// Typically 0 for doors and ~0.9 m for windows.
-        /// </summary>
-        public float elevation;
+        /// <summary>Elevation of the bottom edge of the opening from the floor in meters.</summary>
+        public float elevation = 0f;
 
-        /// <summary>
-        /// Validates the opening data.
-        /// </summary>
-        /// <returns><c>true</c> if valid; otherwise <c>false</c>.</returns>
+        /// <summary>Parent wall identifier.</summary>
+        public string parentWallId;
+
+        // --- Compatibility Aliases ---
+        public string openingId
+        {
+            get => id;
+            set => id = value;
+        }
+
+        public string wallId
+        {
+            get => parentWallId;
+            set => parentWallId = value;
+        }
+
+        public float positionAlongWall
+        {
+            get => position;
+            set => position = value;
+        }
+
+        public float normalizedPosition
+        {
+            get => position;
+            set => position = value;
+        }
+
+        public float sillHeight
+        {
+            get => elevation;
+            set => elevation = value;
+        }
+
+        public float openingWidth
+        {
+            get => width;
+            set => width = value;
+        }
+
+        public float openingHeight
+        {
+            get => height;
+            set => height = value;
+        }
+
         public bool Validate()
         {
-            bool isValid = true;
-
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                Debug.LogWarning("[WallOpeningData] id is null or empty.");
-                isValid = false;
-            }
-
-            if (position < 0f || position > 1f)
-            {
-                Debug.LogWarning($"[WallOpeningData:{id}] position {position} is outside 0–1 range.");
-                isValid = false;
-            }
-
-            if (width <= 0f)
-            {
-                Debug.LogWarning($"[WallOpeningData:{id}] width must be positive.");
-                isValid = false;
-            }
-
-            if (height <= 0f)
-            {
-                Debug.LogWarning($"[WallOpeningData:{id}] height must be positive.");
-                isValid = false;
-            }
-
-            if (elevation < 0f)
-            {
-                Debug.LogWarning($"[WallOpeningData:{id}] elevation must be non-negative.");
-                isValid = false;
-            }
-
-            return isValid;
+            if (string.IsNullOrWhiteSpace(id)) return false;
+            if (position < 0f || position > 1f) return false;
+            if (width <= 0f || height <= 0f) return false;
+            return true;
         }
     }
 
     /// <summary>
-    /// Data describing a single wall segment within a room, including any
-    /// door or window openings cut into it.
+    /// Alias class for backward compatibility with subagent code.
+    /// </summary>
+    [Serializable]
+    public class OpeningData : WallOpeningData
+    {
+    }
+
+    /// <summary>
+    /// Data describing a single wall segment within a room.
     /// </summary>
     [Serializable]
     public class WallData
@@ -110,16 +125,35 @@ namespace HousePlanner.Core
         /// <summary>Thickness of the wall in meters.</summary>
         public float thickness = 0.15f;
 
-        /// <summary>Material / paint colour of the wall as a hex string (e.g. "#FFFFFF").</summary>
+        /// <summary>Material / paint colour of the wall as a hex string.</summary>
         public string materialColor = "#FFFFFF";
+
+        /// <summary>Material identifier for the wall surface.</summary>
+        public string materialId;
+
+        /// <summary>Parent room identifier.</summary>
+        public string parentRoomId;
 
         /// <summary>List of openings (doors and windows) in this wall.</summary>
         public List<WallOpeningData> openings = new List<WallOpeningData>();
 
+        // --- Compatibility Aliases ---
+        public float Length => GetLength();
+
+        public Color color
+        {
+            get
+            {
+                if (ColorUtility.TryParseHtmlString(materialColor, out Color c))
+                    return c;
+                return Color.white;
+            }
+            set => materialColor = "#" + ColorUtility.ToHtmlStringRGBA(value);
+        }
+
         /// <summary>
         /// Calculates the length of the wall in meters.
         /// </summary>
-        /// <returns>The Euclidean distance between start and end points.</returns>
         public float GetLength()
         {
             Vector2 start = startPoint;
@@ -128,10 +162,8 @@ namespace HousePlanner.Core
         }
 
         /// <summary>
-        /// Returns the normalised direction vector from the start point to the end point.
+        /// Returns the normalised direction vector from start to end.
         /// </summary>
-        /// <returns>A unit <see cref="Vector2"/> pointing from start to end,
-        /// or <see cref="Vector2.zero"/> if the wall has zero length.</returns>
         public Vector2 GetDirection()
         {
             Vector2 start = startPoint;
@@ -140,72 +172,12 @@ namespace HousePlanner.Core
             return dir.sqrMagnitude > Mathf.Epsilon ? dir.normalized : Vector2.zero;
         }
 
-        /// <summary>
-        /// Validates the wall data and all contained openings.
-        /// </summary>
-        /// <returns><c>true</c> if all data is valid; otherwise <c>false</c>.</returns>
         public bool Validate()
         {
-            bool isValid = true;
-
-            if (string.IsNullOrWhiteSpace(wallId))
-            {
-                Debug.LogWarning("[WallData] wallId is null or empty.");
-                isValid = false;
-            }
-
-            if (GetLength() < Mathf.Epsilon)
-            {
-                Debug.LogWarning($"[WallData:{wallId}] Wall has zero length (start == end).");
-                isValid = false;
-            }
-
-            if (height <= 0f)
-            {
-                Debug.LogWarning($"[WallData:{wallId}] height must be positive.");
-                isValid = false;
-            }
-
-            if (thickness <= 0f)
-            {
-                Debug.LogWarning($"[WallData:{wallId}] thickness must be positive.");
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(materialColor))
-            {
-                Debug.LogWarning($"[WallData:{wallId}] materialColor is empty.");
-                isValid = false;
-            }
-
-            if (openings != null)
-            {
-                foreach (var opening in openings)
-                {
-                    if (opening == null)
-                    {
-                        Debug.LogWarning($"[WallData:{wallId}] Contains a null opening entry.");
-                        isValid = false;
-                        continue;
-                    }
-
-                    if (!opening.Validate())
-                    {
-                        isValid = false;
-                    }
-
-                    // Check that the opening fits within the wall height
-                    if (opening.elevation + opening.height > height)
-                    {
-                        Debug.LogWarning(
-                            $"[WallData:{wallId}] Opening '{opening.id}' exceeds wall height " +
-                            $"(elevation {opening.elevation} + height {opening.height} > {height}).");
-                        isValid = false;
-                    }
-                }
-            }
-
-            return isValid;
+            if (string.IsNullOrWhiteSpace(wallId)) return false;
+            if (GetLength() < Mathf.Epsilon) return false;
+            if (height <= 0f || thickness <= 0f) return false;
+            return true;
         }
     }
 }

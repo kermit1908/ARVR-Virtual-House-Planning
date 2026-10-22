@@ -340,7 +340,7 @@ namespace HousePlanner.AR
         private void CacheComponents()
         {
             if (raycastManager == null) raycastManager = GetComponent<ARRaycastManager>();
-            if (arSession == null) arSession = FindFirstObjectByType<ARSession>();
+            if (arSession == null) arSession = FindObjectOfType<ARSession>();
             if (planeManager == null) planeManager = GetComponent<ARPlaneManager>();
             if (anchorManager == null) anchorManager = GetComponent<ARAnchorManager>();
             if (arCamera == null) arCamera = Camera.main;

@@ -73,7 +73,7 @@ namespace HousePlanner.AR
             // AR Foundation exposes depth through AROcclusionManager.
             // If one exists and its descriptor reports depth image support we
             // consider depth available.
-            var occlusionManager = Object.FindFirstObjectByType<AROcclusionManager>();
+            var occlusionManager = Object.FindObjectOfType<AROcclusionManager>();
             if (occlusionManager != null)
             {
                 var descriptor = occlusionManager.descriptor;
@@ -98,7 +98,7 @@ namespace HousePlanner.AR
         public static bool IsPlaneDetectionSupported()
         {
 #if UNITY_ANDROID || UNITY_IOS
-            var planeManager = Object.FindFirstObjectByType<ARPlaneManager>();
+            var planeManager = Object.FindObjectOfType<ARPlaneManager>();
             return planeManager != null && planeManager.subsystem != null;
 #else
             return false;
@@ -113,7 +113,7 @@ namespace HousePlanner.AR
         public static bool IsLightEstimationSupported()
         {
 #if UNITY_ANDROID || UNITY_IOS
-            var cameraManager = Object.FindFirstObjectByType<ARCameraManager>();
+            var cameraManager = Object.FindObjectOfType<ARCameraManager>();
             return cameraManager != null;
 #else
             return false;
@@ -128,7 +128,7 @@ namespace HousePlanner.AR
         public static bool IsAnchorSupported()
         {
 #if UNITY_ANDROID || UNITY_IOS
-            var anchorManager = Object.FindFirstObjectByType<ARAnchorManager>();
+            var anchorManager = Object.FindObjectOfType<ARAnchorManager>();
             return anchorManager != null && anchorManager.subsystem != null;
 #else
             return false;

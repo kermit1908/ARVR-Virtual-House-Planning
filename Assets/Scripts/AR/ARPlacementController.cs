@@ -1,3 +1,4 @@
+#pragma warning disable 0414, 0067, 0618
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -111,7 +112,7 @@ namespace HousePlanner.AR
 
             if (planeManager != null)
             {
-                planeManager.trackablesChanged += OnPlanesChanged;
+                planeManager.planesChanged += OnPlanesChanged;
             }
         }
 
@@ -121,7 +122,7 @@ namespace HousePlanner.AR
 
             if (planeManager != null)
             {
-                planeManager.trackablesChanged -= OnPlanesChanged;
+                planeManager.planesChanged -= OnPlanesChanged;
             }
         }
 
@@ -141,33 +142,29 @@ namespace HousePlanner.AR
         /// Initialise the AR session – checks availability, requests permissions,
         /// and begins scanning when ready.
         /// </summary>
-        public async void Initialize()
+        public void Initialize()
+        {
+            StartCoroutine(InitializeRoutine());
+        }
+
+        private System.Collections.IEnumerator InitializeRoutine()
         {
 #if UNITY_ANDROID || UNITY_IOS
             CurrentState = ARState.Initializing;
             EmitStatus("Checking AR support…");
 
-            var availability = await ARSession.CheckAvailability();
+            yield return ARSession.CheckAvailability();
 
-            if (availability.status == SessionAvailabilityStatus.Supported)
+            if (ARSession.state == ARSessionState.NeedsInstall)
+            {
+                EmitStatus("AR software update required. Installing…");
+                yield return ARSession.Install();
+            }
+
+            if (ARSession.state >= ARSessionState.Ready)
             {
                 _isInitialized = true;
                 StartScanning();
-            }
-            else if (availability.status == SessionAvailabilityStatus.NeedsInstall)
-            {
-                EmitStatus("AR software update required. Installing…");
-                var install = await ARSession.Install();
-                if (install.status == SessionInstallationStatus.Success)
-                {
-                    _isInitialized = true;
-                    StartScanning();
-                }
-                else
-                {
-                    CurrentState = ARState.Unsupported;
-                    EmitStatus("Failed to install AR software.");
-                }
             }
             else
             {
@@ -177,6 +174,7 @@ namespace HousePlanner.AR
 #else
             CurrentState = ARState.Unsupported;
             EmitStatus("AR is only supported on Android and iOS.");
+            yield break;
 #endif
         }
 
@@ -483,7 +481,7 @@ namespace HousePlanner.AR
             }
         }
 
-        private void OnPlanesChanged(ARTrackablesChangedEventArgs<ARPlane> args)
+        private void OnPlanesChanged(ARPlanesChangedEventArgs args)
         {
             if (args.added != null && args.added.Count > 0 && _currentState == ARState.Scanning)
             {

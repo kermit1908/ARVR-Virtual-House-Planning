@@ -142,6 +142,18 @@ namespace HousePlanner.HouseGeneration
         }
 
         /// <summary>
+        /// Generates the house from project data into optional parent transforms.
+        /// </summary>
+        public void GenerateFromProject(ProjectData project, Transform wallsParent = null, Transform furnitureParent = null)
+        {
+            if (wallsParent != null)
+            {
+                _houseRoot = wallsParent;
+            }
+            GenerateHouse(project);
+        }
+
+        /// <summary>
         /// Rebuilds the current house.
         /// </summary>
         public void RegenerateHouse()

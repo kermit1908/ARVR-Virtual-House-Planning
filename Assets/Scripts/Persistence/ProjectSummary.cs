@@ -18,6 +18,9 @@ namespace HousePlanner.Persistence
         /// <summary>ISO 8601 timestamp of the last modification.</summary>
         public string modifiedAtIso;
 
+        /// <summary>Compatibility alias for lowercase modifiedAt string.</summary>
+        public string modifiedAt => modifiedAtIso;
+
         /// <summary>Number of rooms in the project.</summary>
         public int roomCount;
 

@@ -7,6 +7,7 @@ namespace HousePlanner.UI
     /// <summary>
     /// Modal dialog controller for confirmation prompts, text inputs, alerts, and error messages.
     /// Provides static helper methods to show popups anywhere in the application.
+    /// Resilient fallback executes callbacks immediately if UI panels are not assigned.
     /// </summary>
     public class DialogUI : MonoBehaviour
     {
@@ -35,6 +36,10 @@ namespace HousePlanner.UI
         [SerializeField] private Text _messageTitleText;
         [SerializeField] private Text _messageBodyText;
         [SerializeField] private Button _messageOkButton;
+
+        public bool HasInputPanel => _inputPanel != null;
+        public bool HasConfirmPanel => _confirmPanel != null;
+        public bool HasMessagePanel => _messagePanel != null;
 
         private Action _onConfirmCallback;
         private Action _onCancelCallback;
@@ -70,16 +75,16 @@ namespace HousePlanner.UI
 
         public static void ShowConfirmation(string title, string message, Action onConfirm, Action onCancel = null)
         {
-            if (_instance == null)
+            if (_instance == null || _instance._confirmPanel == null)
             {
-                Debug.Log($"[DialogUI] Confirm: {title} - {message}");
+                Debug.Log($"[DialogUI] Confirm fallback: {title} - {message}");
                 onConfirm?.Invoke();
                 return;
             }
 
             _instance.HideAll();
             if (_instance._dialogRoot != null) _instance._dialogRoot.SetActive(true);
-            if (_instance._confirmPanel != null) _instance._confirmPanel.SetActive(true);
+            _instance._confirmPanel.SetActive(true);
 
             if (_instance._confirmTitleText != null) _instance._confirmTitleText.text = title;
             if (_instance._confirmMessageText != null) _instance._confirmMessageText.text = message;
@@ -90,16 +95,16 @@ namespace HousePlanner.UI
 
         public static void ShowInputDialog(string title, string defaultText, Action<string> onSubmit, Action onCancel = null)
         {
-            if (_instance == null)
+            if (_instance == null || _instance._inputPanel == null)
             {
-                Debug.Log($"[DialogUI] Input: {title}");
+                Debug.Log($"[DialogUI] Input fallback: {title} -> {defaultText}");
                 onSubmit?.Invoke(defaultText);
                 return;
             }
 
             _instance.HideAll();
             if (_instance._dialogRoot != null) _instance._dialogRoot.SetActive(true);
-            if (_instance._inputPanel != null) _instance._inputPanel.SetActive(true);
+            _instance._inputPanel.SetActive(true);
 
             if (_instance._inputTitleText != null) _instance._inputTitleText.text = title;
             if (_instance._inputTextField != null) _instance._inputTextField.text = defaultText;
@@ -110,16 +115,16 @@ namespace HousePlanner.UI
 
         public static void ShowMessage(string title, string message, Action onOk = null)
         {
-            if (_instance == null)
+            if (_instance == null || _instance._messagePanel == null)
             {
-                Debug.Log($"[DialogUI] Message: {title} - {message}");
+                Debug.Log($"[DialogUI] Message fallback: {title} - {message}");
                 onOk?.Invoke();
                 return;
             }
 
             _instance.HideAll();
             if (_instance._dialogRoot != null) _instance._dialogRoot.SetActive(true);
-            if (_instance._messagePanel != null) _instance._messagePanel.SetActive(true);
+            _instance._messagePanel.SetActive(true);
 
             if (_instance._messageTitleText != null) _instance._messageTitleText.text = title;
             if (_instance._messageBodyText != null) _instance._messageBodyText.text = message;

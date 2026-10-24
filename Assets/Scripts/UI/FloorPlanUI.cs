@@ -11,6 +11,7 @@ namespace HousePlanner.UI
     /// UI Controller for the 2D Floor Plan editor screen.
     /// Hosts editing tool selection, room property controls, dimensions display,
     /// grid snap toggles, and transitions to 3D and AR viewers.
+    /// Auto-constructs clean toolbar and status controls if missing.
     /// </summary>
     public class FloorPlanUI : MonoBehaviour
     {
@@ -45,13 +46,18 @@ namespace HousePlanner.UI
 
         private RoomData _activeSelectedRoom;
 
-        private void Start()
+        private void Awake()
         {
             if (_floorPlanController == null)
             {
                 _floorPlanController = FindObjectOfType<FloorPlanController>();
             }
 
+            AutoFindOrBuildUI();
+        }
+
+        private void Start()
+        {
             SetupListeners();
             UpdateProjectHeader();
 
@@ -60,7 +66,130 @@ namespace HousePlanner.UI
                 _roomPropertiesPanel.SetActive(false);
             }
 
-            SetStatus("Select a tool from the left toolbar to begin designing.");
+            SetStatus("Select 'Draw Room' to draw rooms on the grid, or '3D View' to view the house.");
+        }
+
+        private void AutoFindOrBuildUI()
+        {
+            // 1. Try to find existing buttons
+            Button[] buttons = GetComponentsInChildren<Button>(true);
+            foreach (var b in buttons)
+            {
+                string n = b.gameObject.name.ToLower();
+                if (n.Contains("select")) _btnToolSelect = b;
+                else if (n.Contains("drawroom") || n.Contains("room")) _btnToolDrawRoom = b;
+                else if (n.Contains("addwall") || n.Contains("wall")) _btnToolAddWall = b;
+                else if (n.Contains("adddoor") || n.Contains("door")) _btnToolAddDoor = b;
+                else if (n.Contains("addwindow") || n.Contains("window")) _btnToolAddWindow = b;
+                else if (n.Contains("save")) _btnSave = b;
+                else if (n.Contains("view3d") || n.Contains("3d")) _btnView3D = b;
+                else if (n.Contains("back") || n.Contains("menu")) _btnBackToMenu = b;
+                else if (n.Contains("delete")) _btnDeleteRoom = b;
+            }
+
+            Text[] texts = GetComponentsInChildren<Text>(true);
+            foreach (var t in texts)
+            {
+                string n = t.gameObject.name.ToLower();
+                if (n.Contains("status")) _lblStatus = t;
+                else if (n.Contains("title") || n.Contains("project")) _lblProjectTitle = t;
+            }
+
+            // 2. Build UI dynamically if buttons are missing
+            if (_btnToolDrawRoom == null)
+            {
+                BuildRuntimeToolbar();
+            }
+        }
+
+        private void BuildRuntimeToolbar()
+        {
+            Font font = UnityEngine.Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+            // Top Bar
+            GameObject topBar = new GameObject("TopBar");
+            topBar.transform.SetParent(transform, false);
+            Image topImg = topBar.AddComponent<Image>();
+            topImg.color = new Color(0.12f, 0.14f, 0.18f, 0.95f);
+            RectTransform topRt = topBar.GetComponent<RectTransform>();
+            topRt.anchorMin = new Vector2(0, 1);
+            topRt.anchorMax = new Vector2(1, 1);
+            topRt.pivot = new Vector2(0.5f, 1);
+            topRt.anchoredPosition = Vector2.zero;
+            topRt.sizeDelta = new Vector2(0, 56);
+
+            _btnBackToMenu = CreateButton(topBar.transform, "BtnBack", "◀ Main Menu", new Vector2(90, -28), new Vector2(140, 38), font);
+            _lblProjectTitle = CreateText(topBar.transform, "Title", "2D FLOOR PLANNER", 20, TextAnchor.MiddleLeft, new Vector2(280, -28), new Vector2(300, 38), font);
+            _btnSave = CreateButton(topBar.transform, "BtnSave", "💾 Save Project", new Vector2(-220, -28), new Vector2(140, 38), font, new Vector2(1, 1));
+            _btnView3D = CreateButton(topBar.transform, "BtnView3D", "🏠 3D House View", new Vector2(-70, -28), new Vector2(140, 38), font, new Vector2(1, 1));
+
+            // Left Toolbar
+            GameObject toolBar = new GameObject("LeftToolbar");
+            toolBar.transform.SetParent(transform, false);
+            Image toolImg = toolBar.AddComponent<Image>();
+            toolImg.color = new Color(0.15f, 0.17f, 0.22f, 0.95f);
+            RectTransform toolRt = toolBar.GetComponent<RectTransform>();
+            toolRt.anchorMin = new Vector2(0, 0);
+            toolRt.anchorMax = new Vector2(0, 1);
+            toolRt.pivot = new Vector2(0, 0.5f);
+            toolRt.anchoredPosition = new Vector2(0, -28);
+            toolRt.sizeDelta = new Vector2(160, -56);
+
+            _btnToolSelect = CreateButton(toolBar.transform, "BtnSelect", "👆 Select / Move", new Vector2(80, -40), new Vector2(140, 42), font);
+            _btnToolDrawRoom = CreateButton(toolBar.transform, "BtnDrawRoom", "📐 Draw Room", new Vector2(80, -90), new Vector2(140, 42), font);
+            _btnToolAddWall = CreateButton(toolBar.transform, "BtnAddWall", "🧱 Add Wall", new Vector2(80, -140), new Vector2(140, 42), font);
+            _btnToolAddDoor = CreateButton(toolBar.transform, "BtnAddDoor", "🚪 Add Door", new Vector2(80, -190), new Vector2(140, 42), font);
+            _btnToolAddWindow = CreateButton(toolBar.transform, "BtnAddWindow", "🪟 Add Window", new Vector2(80, -240), new Vector2(140, 42), font);
+
+            // Bottom Status Bar
+            GameObject bottomBar = new GameObject("BottomBar");
+            bottomBar.transform.SetParent(transform, false);
+            Image btmImg = bottomBar.AddComponent<Image>();
+            btmImg.color = new Color(0.12f, 0.14f, 0.18f, 0.95f);
+            RectTransform btmRt = bottomBar.GetComponent<RectTransform>();
+            btmRt.anchorMin = new Vector2(0, 0);
+            btmRt.anchorMax = new Vector2(1, 0);
+            btmRt.pivot = new Vector2(0.5f, 0);
+            btmRt.anchoredPosition = Vector2.zero;
+            btmRt.sizeDelta = new Vector2(0, 36);
+
+            _lblStatus = CreateText(bottomBar.transform, "LblStatus", "Ready", 14, TextAnchor.MiddleLeft, new Vector2(180, 18), new Vector2(800, 30), font);
+        }
+
+        private Button CreateButton(Transform parent, string name, string label, Vector2 pos, Vector2 size, Font font, Vector2? anchor = null)
+        {
+            GameObject go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            Image img = go.AddComponent<Image>();
+            img.color = new Color(0.24f, 0.35f, 0.52f, 1f);
+            Button btn = go.AddComponent<Button>();
+            RectTransform rt = go.GetComponent<RectTransform>();
+            if (anchor.HasValue)
+            {
+                rt.anchorMin = anchor.Value;
+                rt.anchorMax = anchor.Value;
+            }
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
+
+            CreateText(go.transform, "Text", label, 14, TextAnchor.MiddleCenter, Vector2.zero, size, font);
+            return btn;
+        }
+
+        private Text CreateText(Transform parent, string name, string content, int fontSize, TextAnchor alignment, Vector2 pos, Vector2 size, Font font)
+        {
+            GameObject go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            Text txt = go.AddComponent<Text>();
+            txt.text = content;
+            txt.fontSize = fontSize;
+            txt.alignment = alignment;
+            txt.color = Color.white;
+            txt.font = font;
+            RectTransform rt = go.GetComponent<RectTransform>();
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
+            return txt;
         }
 
         private void SetupListeners()
@@ -176,7 +305,7 @@ namespace HousePlanner.UI
             {
                 _floorPlanController.RemoveRoom(_activeSelectedRoom.roomId);
                 _activeSelectedRoom = null;
-                _roomPropertiesPanel.SetActive(false);
+                if (_roomPropertiesPanel != null) _roomPropertiesPanel.SetActive(false);
             });
         }
 

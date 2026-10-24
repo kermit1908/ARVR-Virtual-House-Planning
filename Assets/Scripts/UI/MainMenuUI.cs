@@ -10,6 +10,7 @@ namespace HousePlanner.UI
     /// <summary>
     /// UI Controller for the application Landing / Home screen.
     /// Manages top-level navigation, project creation/opening, and feature entry points.
+    /// Auto-binds UI buttons and handles seamless scene transitions.
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
@@ -33,6 +34,11 @@ namespace HousePlanner.UI
         [SerializeField] private Text _lblAppVersion;
         [SerializeField] private Text _lblARStatus;
 
+        private void Awake()
+        {
+            AutoFindReferences();
+        }
+
         private void Start()
         {
             SetupButtonListeners();
@@ -40,16 +46,74 @@ namespace HousePlanner.UI
             CheckARAvailability();
         }
 
+        private void AutoFindReferences()
+        {
+            Button[] buttons = GetComponentsInChildren<Button>(true);
+            foreach (var b in buttons)
+            {
+                string n = b.gameObject.name.ToLower();
+                if (n.Contains("createnew") || n == "btncreate") _btnCreateNew = b;
+                else if (n.Contains("openexisting") || n == "btnopen") _btnOpenExisting = b;
+                else if (n.Contains("roomplanner") || n == "btnplanner") _btnRoomPlanner = b;
+                else if (n.Contains("3dviewer") || n == "btnviewer") _btn3DViewer = b;
+                else if (n.Contains("arpreview") || n == "btnar") _btnARPreview = b;
+                else if (n.Contains("saveddesigns") || n == "btnsaved") _btnSavedDesigns = b;
+                else if (n.Contains("settings")) _btnSettings = b;
+                else if (n.Contains("help")) _btnHelp = b;
+            }
+
+            Text[] texts = GetComponentsInChildren<Text>(true);
+            foreach (var t in texts)
+            {
+                string n = t.gameObject.name.ToLower();
+                if (n.Contains("version")) _lblAppVersion = t;
+                else if (n.Contains("currentproject") || n.Contains("active")) _lblCurrentProject = t;
+                else if (n.Contains("arstatus")) _lblARStatus = t;
+            }
+        }
+
         private void SetupButtonListeners()
         {
-            if (_btnCreateNew != null) _btnCreateNew.onClick.AddListener(OnCreateNewProjectClicked);
-            if (_btnOpenExisting != null) _btnOpenExisting.onClick.AddListener(OnOpenExistingClicked);
-            if (_btnRoomPlanner != null) _btnRoomPlanner.onClick.AddListener(OnRoomPlannerClicked);
-            if (_btn3DViewer != null) _btn3DViewer.onClick.AddListener(On3DViewerClicked);
-            if (_btnARPreview != null) _btnARPreview.onClick.AddListener(OnARPreviewClicked);
-            if (_btnSavedDesigns != null) _btnSavedDesigns.onClick.AddListener(OnSavedDesignsClicked);
-            if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
-            if (_btnHelp != null) _btnHelp.onClick.AddListener(OnHelpClicked);
+            if (_btnCreateNew != null)
+            {
+                _btnCreateNew.onClick.RemoveAllListeners();
+                _btnCreateNew.onClick.AddListener(OnCreateNewProjectClicked);
+            }
+            if (_btnOpenExisting != null)
+            {
+                _btnOpenExisting.onClick.RemoveAllListeners();
+                _btnOpenExisting.onClick.AddListener(OnOpenExistingClicked);
+            }
+            if (_btnRoomPlanner != null)
+            {
+                _btnRoomPlanner.onClick.RemoveAllListeners();
+                _btnRoomPlanner.onClick.AddListener(OnRoomPlannerClicked);
+            }
+            if (_btn3DViewer != null)
+            {
+                _btn3DViewer.onClick.RemoveAllListeners();
+                _btn3DViewer.onClick.AddListener(On3DViewerClicked);
+            }
+            if (_btnARPreview != null)
+            {
+                _btnARPreview.onClick.RemoveAllListeners();
+                _btnARPreview.onClick.AddListener(OnARPreviewClicked);
+            }
+            if (_btnSavedDesigns != null)
+            {
+                _btnSavedDesigns.onClick.RemoveAllListeners();
+                _btnSavedDesigns.onClick.AddListener(OnSavedDesignsClicked);
+            }
+            if (_btnSettings != null)
+            {
+                _btnSettings.onClick.RemoveAllListeners();
+                _btnSettings.onClick.AddListener(OnSettingsClicked);
+            }
+            if (_btnHelp != null)
+            {
+                _btnHelp.onClick.RemoveAllListeners();
+                _btnHelp.onClick.AddListener(OnHelpClicked);
+            }
         }
 
         private void UpdateLabels()
@@ -79,53 +143,63 @@ namespace HousePlanner.UI
 
         public void OnCreateNewProjectClicked()
         {
-            DialogUI.ShowInputDialog("Create New Project", "My Dream Home", (name) =>
+            Debug.Log("[MainMenuUI] Create New Project clicked. Opening 2D Floor Planner...");
+            ProjectData newProject = ProjectData.CreateDefault("New House Project");
+            if (ProjectPersistenceService.Instance != null)
             {
-                if (string.IsNullOrWhiteSpace(name)) name = "Untitled Project";
-                ProjectData newProject = ProjectData.CreateDefault(name);
-
-                // Save initial
-                if (ProjectPersistenceService.Instance != null)
-                {
-                    ProjectPersistenceService.Instance.SaveProject(newProject);
-                }
-
-                NavigationManager.Instance.SetActiveProject(newProject);
-                UpdateLabels();
-                NavigationManager.Instance.GoToFloorPlanner();
-            });
+                ProjectPersistenceService.Instance.SaveProject(newProject);
+            }
+            NavigationManager.Instance.SetActiveProject(newProject);
+            UpdateLabels();
+            NavigationManager.Instance.GoToFloorPlanner();
         }
 
         public void OnOpenExistingClicked()
         {
-            if (_projectListPanel != null)
+            Debug.Log("[MainMenuUI] Open Existing Project clicked. Loading Sample Project...");
+            ProjectData projectToOpen = null;
+            if (ProjectPersistenceService.Instance != null)
             {
-                _projectListPanel.SetActive(true);
+                var summaries = ProjectPersistenceService.Instance.LoadAllProjectSummaries();
+                if (summaries != null && summaries.Count > 0)
+                {
+                    projectToOpen = ProjectPersistenceService.Instance.LoadProject(summaries[0].projectId);
+                }
             }
-            else
+
+            if (projectToOpen == null)
             {
-                // Toggle saved designs view
-                OnSavedDesignsClicked();
+                projectToOpen = SampleProjectGenerator.CreateSampleProject();
+                if (ProjectPersistenceService.Instance != null)
+                {
+                    ProjectPersistenceService.Instance.SaveProject(projectToOpen);
+                }
             }
+
+            NavigationManager.Instance.SetActiveProject(projectToOpen);
+            UpdateLabels();
+            NavigationManager.Instance.GoToHouseViewer();
         }
 
         public void OnRoomPlannerClicked()
         {
+            Debug.Log("[MainMenuUI] 2D Room Planner clicked. Loading FloorPlanner scene...");
             EnsureActiveProject();
             NavigationManager.Instance.GoToFloorPlanner();
         }
 
         public void On3DViewerClicked()
         {
+            Debug.Log("[MainMenuUI] 3D House Viewer clicked. Loading HouseViewer scene...");
             EnsureActiveProject();
             NavigationManager.Instance.GoToHouseViewer();
         }
 
         public void OnARPreviewClicked()
         {
+            Debug.Log("[MainMenuUI] AR Preview clicked.");
             EnsureActiveProject();
 
-            // Capability check before entering AR
             var status = ARCapabilityChecker.CheckARSupport();
             if (status == ARSupportStatus.Unsupported && Application.platform == RuntimePlatform.Android)
             {
@@ -142,6 +216,10 @@ namespace HousePlanner.UI
             if (_projectListPanel != null)
             {
                 _projectListPanel.SetActive(!_projectListPanel.activeSelf);
+            }
+            else
+            {
+                OnOpenExistingClicked();
             }
         }
 
@@ -161,11 +239,11 @@ namespace HousePlanner.UI
             }
             else
             {
-                DialogUI.ShowMessage("House Planner Help", 
-                    "• 2D Planner: Drag to draw rooms, add walls, doors, and windows.\n" +
-                    "• 3D Viewer: Orbit with right-mouse / touch, toggle walls/ceilings, view furniture.\n" +
-                    "• AR Preview: Scan floor, tap to place life-size or miniature house model on phone.\n" +
-                    "• Storage: Projects auto-save locally to disk in JSON format.");
+                DialogUI.ShowMessage("House Planner Quick Guide", 
+                    "• 2D Room Planner: Draw rooms, drag walls to resize, add doors & windows.\n" +
+                    "• 3D House Viewer: Inspect procedural 3D model, walk inside, orbit, place furniture.\n" +
+                    "• AR Room Preview: Project floor plan life-size or miniature on detected real-world surfaces.\n" +
+                    "• Save & Load: Designs save to local storage in JSON format.");
             }
         }
 
@@ -174,6 +252,10 @@ namespace HousePlanner.UI
             if (NavigationManager.CurrentProject == null)
             {
                 NavigationManager.CurrentProject = SampleProjectGenerator.CreateSampleProject();
+                if (ProjectPersistenceService.Instance != null)
+                {
+                    ProjectPersistenceService.Instance.SaveProject(NavigationManager.CurrentProject);
+                }
             }
         }
     }

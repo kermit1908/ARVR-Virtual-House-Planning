@@ -87,23 +87,25 @@ namespace HousePlanner.UI
 
         private void LoadSceneSafely(string sceneName)
         {
+            Debug.Log($"[NavigationManager] Transitioning to scene: '{sceneName}'...");
             try
             {
-                // If scene exists in build settings, load it; otherwise notify
-                if (Application.CanStreamedLevelBeLoaded(sceneName))
-                {
-                    SceneManager.LoadScene(sceneName);
-                }
-                else
-                {
-                    Debug.Log($"[NavigationManager] Loading or switching to scene: {sceneName}");
-                    OnScreenChanged?.Invoke(sceneName);
-                }
+                SceneManager.LoadScene(sceneName);
+                OnScreenChanged?.Invoke(sceneName);
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[NavigationManager] Scene '{sceneName}' transition: {ex.Message}. Falling back to internal screen event.");
-                OnScreenChanged?.Invoke(sceneName);
+                Debug.LogWarning($"[NavigationManager] Direct load failed for '{sceneName}': {ex.Message}. Trying with Assets/Scenes/ path...");
+                try
+                {
+                    SceneManager.LoadScene($"Assets/Scenes/{sceneName}.unity");
+                    OnScreenChanged?.Invoke(sceneName);
+                }
+                catch (Exception ex2)
+                {
+                    Debug.LogError($"[NavigationManager] Scene load failed: {ex2.Message}");
+                    OnScreenChanged?.Invoke(sceneName);
+                }
             }
         }
     }

@@ -1,0 +1,77 @@
+{
+  "best_model": "Gradient Boosting",
+  "evaluation_metrics": {
+    "Linear Regression": {
+      "mae": 383496.64527845284,
+      "rmse": 568123.5109705357,
+      "r2": 0.9538791184231826,
+      "mape": 9.571845248333814,
+      "cv_r2": 0.9586283386312076,
+      "mae_formatted": "\u20b9383,497",
+      "rmse_formatted": "\u20b9568,124",
+      "mape_formatted": "9.57%"
+    },
+    "Random Forest": {
+      "mae": 301959.94829237624,
+      "rmse": 473808.6789846132,
+      "r2": 0.9679212011207265,
+      "mape": 6.153460642793462,
+      "cv_r2": 0.9735714748175587,
+      "mae_formatted": "\u20b9301,960",
+      "rmse_formatted": "\u20b9473,809",
+      "mape_formatted": "6.15%"
+    },
+    "Gradient Boosting": {
+      "mae": 264286.3559298518,
+      "rmse": 446256.0832085517,
+      "r2": 0.9715435726686696,
+      "mape": 5.3094262180255845,
+      "cv_r2": 0.9774677668092477,
+      "mae_formatted": "\u20b9264,286",
+      "rmse_formatted": "\u20b9446,256",
+      "mape_formatted": "5.31%"
+    }
+  },
+  "top_features_importance_percent": {
+    "cement_quantity": 31.03,
+    "brick_quantity": 16.53,
+    "concrete_quantity": 12.36,
+    "quality_Standard": 9.18,
+    "builtup_area": 8.67,
+    "tile_area": 7.62,
+    "sand_quantity": 6.57,
+    "quality_Premium": 3.42,
+    "paint_area": 3.06,
+    "steel_quantity": 0.56,
+    "location_Mumbai": 0.43,
+    "location_Hyderabad": 0.25,
+    "plot_area": 0.17,
+    "location_Delhi": 0.06,
+    "location_Chennai": 0.06,
+    "room_count": 0.02,
+    "bedrooms": 0.01,
+    "floors": 0.01,
+    "bathrooms": 0.0
+  },
+  "num_features": [
+    "plot_area",
+    "builtup_area",
+    "floors",
+    "bedrooms",
+    "bathrooms",
+    "room_count",
+    "concrete_quantity",
+    "steel_quantity",
+    "brick_quantity",
+    "cement_quantity",
+    "sand_quantity",
+    "tile_area",
+    "paint_area"
+  ],
+  "cat_features": [
+    "location",
+    "quality"
+  ],
+  "dataset_size": 1200,
+  "residual_std": 443878.8440716737
+}

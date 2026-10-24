@@ -35,4 +35,11 @@ __pycache__/
 *$py.class
 *.db
 venv/
+backend/venv/
 .env
+
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/

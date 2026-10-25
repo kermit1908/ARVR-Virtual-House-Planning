@@ -108,9 +108,9 @@ class PDFDoc:
         
         # Paper Title (Wrap if needed)
         lines = [
-            "A Spatially Grounded BIM and AR/VR Framework for Residential",
-            "Design Visualization, Automated Quantity Take-Off, and",
-            "Machine Learning Construction Cost Prediction"
+            "A SPATIALLY GROUNDED AR/VR FRAMEWORK",
+            "FOR RESIDENTIAL DESIGN VISUALIZATION AND",
+            "VALIDATION WITH 5D BIM COST ESTIMATION"
         ]
         for l in lines:
             w_est = len(l) * 6.5
@@ -502,23 +502,13 @@ def generate_full_report(output_pdf_path):
     ]
     pdf.add_callout_box(eq_lines, title="FORMULATION 1: GEOMETRIC VALIDATION LAYER")
     
-    # Section IV: SYSTEM ARCHITECTURE
-    pdf.add_section_header("IV. SYSTEM ARCHITECTURE")
+    # Section IV: PROPOSED FRAMEWORK
+    pdf.add_section_header("IV. PROPOSED FRAMEWORK")
     pdf.add_paragraph(
-        "The SMARTBUILD platform adopts a three-tier decoupled microservice architecture comprising a Next.js 15 frontend, a FastAPI Python 3.14 backend, "
-        "and an integrated SQLite and Scikit-learn data tier. A Single Source of Truth (SSOT) parametric model coordinates all components."
-    )
-    pdf.add_paragraph(
-        "1) Presentation Tier: Built with React 19, TypeScript, and Tailwind CSS. Employs Three.js for client-side WebGL rendering and WebXR Device API "
-        "for mobile AR surface placement and headset VR navigation at human eye-level (1.70 m)."
-    )
-    pdf.add_paragraph(
-        "2) Application Tier: Implements asynchronous FastAPI REST endpoints for BIM model generation, deterministic IS 1200 QTO calculation, 5D cost "
-        "aggregation, and serialized Gradient Boosting ML inference."
-    )
-    pdf.add_paragraph(
-        "3) Data Tier: Houses relational project metadata and regional material rate matrices in SQLite (smartbuild.db), and machine-learning regression "
-        "pipeline artifacts (best_model.pkl, metrics.json)."
+        "The framework follows a closed-loop system flow. The project is initialized from custom plot parameters or pre-engineered architectural templates; "
+        "an editable parametric BIM model stores geometry, materials, and element transforms; the analytical validation layer verifies spatial constraints; "
+        "and the unified state is reviewed through interactive 3D, AR, and VR. The same model simultaneously drives automated QTO, 5D costing, ML prediction, "
+        "4D scheduling, and comprehensive reporting."
     )
     
     # Architecture Callout Diagram
@@ -532,23 +522,49 @@ def generate_full_report(output_pdf_path):
         "     v",
         "SQLITE (Rates Matrix) & JOBLIB (Serialized ML Pipeline)"
     ]
-    pdf.add_callout_box(arch_lines, title="FIGURE 1: CLOSED-LOOP SYSTEM ARCHITECTURE")
-    
-    # Section V: IMPLEMENTATION & QTO ENGINEERING
-    pdf.add_section_header("V. IMPLEMENTATION & QTO ENGINEERING")
+    pdf.add_callout_box(arch_lines, title="FIG. 1: SPATIALLY GROUNDED AR/VR WORKFLOW")
+
+    pdf.add_subsection_header("A. Requirements and Design Principles")
     pdf.add_paragraph(
-        "The system incorporates 10 pre-engineered architectural templates (from 1BHK compact homes to 4BHK luxury duplexes). From the parametric building "
-        "parameters, the backend extracts exact quantities adhering to statutory Indian Standards:"
+        "The system adheres to scale preservation (SI metric coordinates), Single Source of Truth consistency across all 3D/AR/VR review modes, "
+        "traceability to statutory Indian Standards, and graceful degradation to standard WebGL orbit navigation when WebXR sensors are unavailable."
+    )
+    pdf.add_subsection_header("B. Room Input and Editable Design")
+    pdf.add_paragraph(
+        "The building input preserves exact room boundaries, openings, and height levels. Ten architectural templates (1BHK to 4BHK duplexes) provide calibrated "
+        "starter configurations that can be edited parametrically in real time."
+    )
+    pdf.add_subsection_header("C. Placement, Validation, and Feedback")
+    pdf.add_paragraph(
+        "Spatial checks distinguish hard geometric collisions from circulation clearance guidelines. Opening deductions follow IS 1200 Part III, and shared "
+        "party-wall coefficients (phi = 0.70) eliminate duplicate overlapping walls between adjacent rooms."
+    )
+    pdf.add_subsection_header("D. AR and VR Review")
+    pdf.add_paragraph(
+        "WebXR surface placement enables AR projection onto real physical plots (1:1 or 1:20 tabletop scale). Immersive VR walkthroughs afford an egocentric, "
+        "eye-level (1.70 m) human-scale inspection of room proportions, door clearances, and sightlines."
+    )
+
+    # Section V: SYSTEM IMPLEMENTATION AND ARCHITECTURE
+    pdf.add_section_header("V. SYSTEM IMPLEMENTATION AND ARCHITECTURE")
+    pdf.add_subsection_header("A. Component Boundaries and Software Stack")
+    pdf.add_paragraph(
+        "The SMARTBUILD platform adopts a decoupled multi-tier web architecture: Next.js 15 (React 19, TypeScript, Tailwind CSS) for the presentation layer; "
+        "FastAPI (Python 3.14) for high-performance ASGI backend services; and SQLite coupled with serialized Scikit-learn pipelines for persistence and inference."
+    )
+    pdf.add_subsection_header("B. Engineering Quantity Take-Off (IS 1200 / IS 456)")
+    pdf.add_paragraph(
+        "From the parametric BIM model, the backend extracts exact quantities adhering to statutory Indian Standards:"
     )
     pdf.add_paragraph(
-        "• Reinforced Cement Concrete (IS 456): Calculated at 0.40 m³ per m² built-up area for footings, plinth beams, columns, and slabs, with a 3.0% pouring wastage allowance."
+        "• Reinforced Cement Concrete (IS 456): Calculated at 0.40 m³ per m² built-up area for footings, plinth beams, columns, and slabs (3.0% pouring wastage)."
     )
     pdf.add_paragraph(
         "• Fe500D TMT Steel (SP 34): Calculated at 40.0 kg per m² built-up area (98 kg/m³ concrete) with 4.0% fabrication overlap allowance."
     )
     pdf.add_paragraph(
-        "• Brick Masonry (IS 1200 Part III): Standard modular red clay bricks (190 x 90 x 90 mm) in 1:6 mortar. A party-wall sharing coefficient (phi = 0.70) "
-        "deducts duplicate partition boundaries between adjacent rooms, yielding a calibrated 211 bricks/m²."
+        "• Brick Masonry (IS 1200 Part III): Standard modular red clay bricks in 1:6 mortar. A party-wall factor (phi = 0.70) prevents overlapping room-box inflation, "
+        "yielding a calibrated 211 bricks/m²."
     )
     pdf.add_paragraph(
         "• Cement & Sand (IS 383): 4.40 bags (50kg) of PPC 53 Grade cement and 0.58 m³ of M-Sand per m² built-up area for structural mix, masonry, and plastering."
@@ -556,10 +572,15 @@ def generate_full_report(output_pdf_path):
     pdf.add_paragraph(
         "• Finishes: Double-charged vitrified floor tiles with 10% cutting wastage, and two-coat acrylic emulsion interior paint."
     )
-    
-    # Section VI: EXPERIMENTAL RESULTS AND EVALUATION
-    pdf.add_section_header("VI. EXPERIMENTAL RESULTS & EVALUATION")
-    pdf.add_subsection_header("A. Machine Learning Regression Benchmark")
+
+    # Section VI: EMPIRICAL EVALUATION AND RESULTS
+    pdf.add_section_header("VI. EMPIRICAL EVALUATION AND RESULTS")
+    pdf.add_subsection_header("A. Measures and Operational Definitions")
+    pdf.add_paragraph(
+        "Evaluation metrics include predictive accuracy (R², 5-fold CV R², MAE, MAPE, RMSE), cost variance between AI market models and statutory rule-based DSR rates, "
+        "API response latency (ms), and WebGL rendering frame rate (FPS)."
+    )
+    pdf.add_subsection_header("B. Analysis and Experimental Results")
     pdf.add_paragraph(
         "We evaluated four candidate regression algorithms across a 1,000 project synthetic dataset calibrated against historical Indian real-estate indices. "
         "Features extracted from BIM models included plot area, built-up area, room count, and material quantities. 5-fold cross-validation was performed:"
@@ -624,17 +645,23 @@ def generate_full_report(output_pdf_path):
         "and civil labour wage indices."
     )
     
-    # Section VII: DISCUSSION AND LIMITATIONS
-    pdf.add_section_header("VII. DISCUSSION AND LIMITATIONS")
+    pdf.add_subsection_header("C. Ethics and Data Handling")
     pdf.add_paragraph(
-        "The findings demonstrate that browser-native WebXR successfully eliminates the requirement for heavy workstation gaming engines, providing accessible "
-        "human-scale visualization on commodity smartphones and headsets. Furthermore, incorporating IS 1200 opening deductions and shared party-wall coefficients "
-        "prevents geometric overcounting in automated QTO."
+        "User spatial configurations and rate computations are isolated under secure JWT sessions. No raw camera frames leave the client device; "
+        "WebXR spatial tracking operates within the sandboxed browser runtime."
     )
+
+    # Section VII: LIMITATIONS AND FUTURE WORK
+    pdf.add_section_header("VII. LIMITATIONS AND FUTURE WORK")
+    pdf.add_subsection_header("A. Threats to Validity")
     pdf.add_paragraph(
-        "Limitations: Estimates represent preliminary statutory guidelines and do not replace certified structural engineering stamps. Soil mechanics assumptions "
-        "presume standard bearing capacity (150 kN/m²); rocky or black cotton soils would require site-specific substructure adjustments. Lastly, Safari on iOS "
-        "requires enabling experimental WebXR flags for immersive AR, with smooth fallback to 3D touch orbit navigation."
+        "Preliminary 5D estimates represent statutory planning benchmarks rather than binding contractor tenders. Foundation quantities assume standard bearing capacity "
+        "(150 kN/m²); rocky or black cotton soils require site-specific geodetic adjustments. The ML model is calibrated for residences under 400 m² built-up area."
+    )
+    pdf.add_subsection_header("B. Future Work Priorities")
+    pdf.add_paragraph(
+        "Future work will implement automated Industry Foundation Classes (IFC 4.3) serialization for ETABS and STAAD.Pro structural analysis, multi-user WebXR "
+        "collaborative reviews, and embodied carbon footprint lifecycle assessment (LCA)."
     )
     
     # Section VIII: CONCLUSION
@@ -659,21 +686,26 @@ def generate_full_report(output_pdf_path):
     # REFERENCES
     pdf.add_section_header("REFERENCES")
     refs = [
-        "D. Sornoza-Parrales et al., 'Evolution and research trends in VR/AR for AEC industry,' Front. Virtual Real., vol. 6, Art. no. 1725875, 2025.",
-        "H. Elbadawy and A. Farouk, 'Implementation of virtual reality technology in architecture: A review,' Arch. Comput. Methods Eng., vol. 32, pp. 2457–2465, 2025.",
-        "Matterport, '3D camera and virtual tour platform,' [Online]. Available: https://matterport.com.",
-        "IKEA India, 'Room capture and digital furnishing on IKEA Kreativ,' [Online]. Available: https://www.ikea.com.",
-        "Planner 5D, 'Floor plan software: Design 2D and 3D layouts,' [Online]. Available: https://planner5d.com.",
+        "D. Sornoza-Parrales, G. O. Baque Vera, M. L. Parrales Poveda, and T. M. Macías-Parrales, 'Evolution and research trends in VR/AR for AEC industry,' Front. Virtual Real., vol. 6, Art. no. 1725875, 2025.",
+        "H. Elbadawy and A. Farouk, 'Implementation of virtual reality technology in architecture field, and education: A review,' Arch. Comput. Methods Eng., vol. 32, pp. 2457–2465, 2025.",
+        "Matterport, '3D camera and virtual tour platform,' [Online]. Available: https://go.matterport.com/PS_EN.html, 2026.",
+        "IKEA India, 'How do I scan a room on IKEA Kreativ?' [Online]. Available: https://www.ikea.com/in/en/, 2026.",
+        "Planner 5D, 'Floor plan software: Design 2D and 3D layouts with ease,' [Online]. Available: https://planner5d.com, 2026.",
+        "Planner 5D Help Center, 'AR with Planner 5D (iOS),' [Online]. Available: https://support.planner5d.com, 2026.",
         "Apple Inc., 'RoomPlan: Create 3D floor plans with LiDAR,' Apple Developer Documentation, 2026.",
-        "M. Mauri et al., 'Comparing immersive and non-immersive real estate experience,' Comput. Human Behav., vol. 150, Art. no. 107996, 2024.",
-        "J. H. Ma et al., 'Comparative analysis of immersive VR on end-user design review,' Build. Environ., vol. 267, Art. no. 112237, 2025.",
-        "M. Acikel et al., 'Mapping the literature: Systematic review of VR in architecture,' Open House Int., vol. 51, pp. 210–232, 2026.",
-        "E. Yigitbas, K. Nowosad, and G. Engels, 'Supporting architectural visualization through BIM and AR/VR: Systematic review,' Autom. Constr., vol. 152, 2023.",
-        "A. Sidani et al., 'Recent tools and techniques of BIM-Based Augmented Reality: A review,' Arch. Comput. Methods Eng., vol. 28, pp. 3501–3522, 2021.",
+        "M. Mauri, G. Rancati, G. Riva, and A. Gaggioli, 'Comparing immersive and non-immersive real estate experience,' Comput. Human Behav., vol. 150, Art. no. 107996, 2024.",
+        "J. H. Ma, E. Erdogmus, S. Kangisser, and E. Yang, 'Comparative analysis of immersive VR on end-user design review,' Build. Environ., vol. 267, Art. no. 112237, 2025.",
+        "M. Acikel, H. T. Ormecioglu, and I. Erbas, 'Mapping the literature: Systematic review of VR in architecture,' Open House Int., vol. 51, no. 2, pp. 210–232, 2026.",
+        "J. K. T. Tang, W. M. Lau, K. K. Chan, and K. H. To, 'AR interior designer: Automatic furniture arrangement using spatial relationships,' in Proc. VSMM, 2014, pp. 345–352.",
+        "M. Macchiaroli, L. Dolores, and G. De Mare, 'Extended reality impacts on real estate and economic project management,' Smart Sustain. Built Environ., 2025.",
+        "H. Fan, Y. Wang, H. Fang, Y. Gui, and Y. Song, 'Immersive VR in architecture: Comprehensive review for HMD and CAVE,' Virtual Real., vol. 30, Art. no. 161, 2026.",
+        "E. Yigitbas, K. Nowosad, and G. Engels, 'Supporting architectural visualization through BIM and AR/VR: Systematic review,' Autom. Constr., vol. 152, Art. no. 104932, 2023.",
+        "A. Sidani, B. Dinis, J. Duarte, J. P. Santos, and R. Martins, 'Recent tools and techniques of BIM-Based Augmented Reality: A review,' Arch. Comput. Methods Eng., vol. 28, pp. 3501–3522, 2021.",
         "H. Jafary and O. Shojaei, 'AI and machine learning in BIM-based construction cost estimation,' J. Build. Eng., vol. 84, Art. no. 108520, 2026.",
         "Bureau of Indian Standards, 'IS 1200: Methods of Measurement of Building and Civil Engineering Works,' New Delhi: BIS, 2020.",
         "Bureau of Indian Standards, 'IS 456: Plain and Reinforced Concrete - Code of Practice,' Fourth Revision, New Delhi: BIS, 2021.",
-        "H. Fan et al., 'Immersive VR in architecture: A comprehensive review for HMD and CAVE,' Virtual Real., vol. 30, Art. no. 161, 2026."
+        "W3C, 'WebXR Device API,' W3C Working Group Note, World Wide Web Consortium, 2024. [Online]. Available: https://www.w3.org/TR/webxr/.",
+        "P. A. Risi and C. R. Couper, 'Evaluating spatial awareness and scale perception in browser-based augmented reality,' J. Archit. Eng., vol. 30, no. 3, Art. no. 04024018, 2024."
     ]
     for idx, ref in enumerate(refs, 1):
         pdf.add_reference(idx, ref)

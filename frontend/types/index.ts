@@ -52,9 +52,31 @@ export interface BIMHouseConfig {
   floors: FloorInput[];
 }
 
+export interface PotItem {
+  id: string;
+  name: string;
+  type: 'terracotta' | 'ceramic' | 'urn' | 'flower' | 'bonsai';
+  plantType: 'foliage' | 'snake' | 'palm' | 'flowers';
+  potColor: string;
+  position: [number, number, number];
+  scale: number;
+}
+
+export interface BuildingCustomization {
+  wallColor: string;
+  wallFinish: 'matte' | 'satin' | 'gloss';
+  customWallColors?: Record<string, string>;
+  doorColor: string;
+  customDoorColors?: Record<string, string>;
+  grillColor: string;
+  showGrills: boolean;
+  grillStyle: 'vertical' | 'grid' | 'modern';
+  pots: PotItem[];
+}
+
 export interface BIMElement {
   id: string;
-  type: 'Wall' | 'Floor' | 'Ceiling' | 'Door' | 'Window' | 'Roof' | 'Column';
+  type: 'Wall' | 'Floor' | 'Ceiling' | 'Door' | 'Window' | 'Roof' | 'Column' | 'Grill' | 'Pot';
   floor_level: number;
   room_name?: string;
   length?: number;
@@ -68,6 +90,8 @@ export interface BIMElement {
   rotation: [number, number, number];
   unit_cost?: number;
   estimated_cost?: number;
+  color?: string;
+  finish?: string;
 }
 
 export interface BIMModelResponse {

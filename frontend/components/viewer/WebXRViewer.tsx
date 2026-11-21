@@ -9,9 +9,10 @@ interface WebXRViewerProps {
   mode: 'vr' | 'ar';
   elements: BIMElement[];
   onBack: () => void;
+  projectId?: string;
 }
 
-export default function WebXRViewer({ mode, elements, onBack }: WebXRViewerProps) {
+export default function WebXRViewer({ mode, elements, onBack, projectId = 'default' }: WebXRViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [xrSupported, setXrSupported] = useState<boolean | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -73,6 +74,18 @@ export default function WebXRViewer({ mode, elements, onBack }: WebXRViewerProps
     const houseGroup = new THREE.Group();
     scene.add(houseGroup);
 
+    // Load active styling customizations
+    let customSettings: any = null;
+    try {
+      const saved = localStorage.getItem(`smartbuild_customization_${projectId}`);
+      if (saved) customSettings = JSON.parse(saved);
+    } catch {}
+
+    const defaultWallColor = customSettings?.wallColor ? new THREE.Color(customSettings.wallColor).getHex() : 0xd1d5db;
+    const defaultDoorColor = customSettings?.doorColor ? new THREE.Color(customSettings.doorColor).getHex() : 0xb45309;
+    const grillColorHex = customSettings?.grillColor ? new THREE.Color(customSettings.grillColor).getHex() : 0x18181b;
+    const showGrills = customSettings?.showGrills !== false;
+
     // Build building elements
     elements.forEach((elem) => {
       const w = elem.width || elem.thickness || 0.23;
@@ -80,23 +93,65 @@ export default function WebXRViewer({ mode, elements, onBack }: WebXRViewerProps
       const l = elem.length || 4.0;
       const geo = new THREE.BoxGeometry(w, h, l);
 
-      let color = 0xd1d5db;
-      if (elem.type === 'Floor') color = 0x94a3b8;
-      if (elem.type === 'Door') color = 0xb45309;
-      if (elem.type === 'Window') color = 0x38bdf8;
-      if (elem.type === 'Roof') color = 0x475569;
+      let color = defaultWallColor;
+      if (elem.type === 'Wall') {
+        color = customSettings?.customWallColors?.[elem.id] 
+          ? new THREE.Color(customSettings.customWallColors[elem.id]).getHex() 
+          : defaultWallColor;
+      } else if (elem.type === 'Door') {
+        color = customSettings?.customDoorColors?.[elem.id]
+          ? new THREE.Color(customSettings.customDoorColors[elem.id]).getHex()
+          : defaultDoorColor;
+      } else if (elem.type === 'Floor') color = 0x94a3b8;
+      else if (elem.type === 'Window') color = 0x38bdf8;
+      else if (elem.type === 'Roof') color = 0x475569;
 
       const mat = new THREE.MeshStandardMaterial({
         color,
         transparent: elem.type === 'Window',
         opacity: elem.type === 'Window' ? 0.45 : 1.0,
-        roughness: 0.5
+        roughness: elem.type === 'Wall' ? 0.5 : 0.4
       });
 
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(elem.position[0], elem.position[1], elem.position[2]);
       houseGroup.add(mesh);
+
+      // Add window safety grills if enabled
+      if (elem.type === 'Window' && showGrills) {
+        const grillMat = new THREE.MeshStandardMaterial({ color: grillColorHex, metalness: 0.85, roughness: 0.3 });
+        const numBars = Math.max(3, Math.floor(l / 0.2));
+        const step = (l - 0.1) / (numBars + 1);
+        for (let i = 1; i <= numBars; i++) {
+          const vBar = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, h - 0.05, 8), grillMat);
+          vBar.position.set(elem.position[0], elem.position[1], elem.position[2] - l / 2 + 0.05 + i * step);
+          houseGroup.add(vBar);
+        }
+      }
     });
+
+    // Add placed pots if any
+    if (customSettings?.pots && Array.isArray(customSettings.pots)) {
+      customSettings.pots.forEach((pot: any) => {
+        const potGroup = new THREE.Group();
+        potGroup.position.set(pot.position[0], pot.position[1], pot.position[2]);
+        potGroup.scale.setScalar(pot.scale || 1.0);
+
+        const potColorNum = new THREE.Color(pot.potColor || '#c25e36').getHex();
+        const potMat = new THREE.MeshStandardMaterial({ color: potColorNum, roughness: 0.6 });
+        const potMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.16, 0.48, 16), potMat);
+        potMesh.position.y = 0.24;
+        potGroup.add(potMesh);
+
+        const leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.6 });
+        const foliage = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 10), leafMat);
+        foliage.position.y = 0.48 + 0.2;
+        foliage.scale.set(1.1, 0.9, 1.1);
+        potGroup.add(foliage);
+
+        houseGroup.add(potGroup);
+      });
+    }
 
     // Walkthrough controls (WASD + Mouse Drag)
     const moveState = { forward: 0, right: 0 };

@@ -298,6 +298,7 @@ export default function ProjectWorkspacePage({ params }: PageProps) {
                 elements={bimModel.elements}
                 builtupArea={bimModel.builtup_area}
                 floorsCount={bimModel.floors_count}
+                projectId={projectId}
               />
             ) : (
               <div className="h-[620px] flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">
@@ -333,6 +334,7 @@ export default function ProjectWorkspacePage({ params }: PageProps) {
                 mode="vr"
                 elements={bimModel.elements}
                 onBack={() => setActiveTab('viewer')}
+                projectId={projectId}
               />
             ) : (
               <div className="h-[620px] flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">
@@ -348,6 +350,7 @@ export default function ProjectWorkspacePage({ params }: PageProps) {
                 mode="ar"
                 elements={bimModel.elements}
                 onBack={() => setActiveTab('viewer')}
+                projectId={projectId}
               />
             ) : (
               <div className="h-[620px] flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-xl p-8 text-center">

@@ -197,6 +197,42 @@ namespace HousePlanner.Furniture
                     defaultScale = new Vector3(2.0f, 1.5f, 0.02f),
                     description = "Decorative floor rug.",
                     iconName = "icon_rug"
+                },
+                new FurnitureCatalogueEntry
+                {
+                    catalogueId = "PlantPot_Terracotta",
+                    displayName = "Terracotta Plant Pot",
+                    category = FurnitureCategory.Decor,
+                    defaultScale = new Vector3(0.5f, 0.7f, 0.5f),
+                    description = "Classic terracotta clay pot with lush green foliage.",
+                    iconName = "icon_pot_terracotta"
+                },
+                new FurnitureCatalogueEntry
+                {
+                    catalogueId = "PlantPot_Ceramic",
+                    displayName = "Ceramic Planter",
+                    category = FurnitureCategory.Decor,
+                    defaultScale = new Vector3(0.45f, 0.9f, 0.45f),
+                    description = "Modern white ceramic planter with upright snake plant.",
+                    iconName = "icon_pot_ceramic"
+                },
+                new FurnitureCatalogueEntry
+                {
+                    catalogueId = "PlantPot_GardenUrn",
+                    displayName = "Garden Palm Urn",
+                    category = FurnitureCategory.Decor,
+                    defaultScale = new Vector3(0.7f, 1.2f, 0.7f),
+                    description = "Large decorative stone urn with tropical palm fronds.",
+                    iconName = "icon_pot_urn"
+                },
+                new FurnitureCatalogueEntry
+                {
+                    catalogueId = "FlowerPot",
+                    displayName = "Flower Blossom Pot",
+                    category = FurnitureCategory.Decor,
+                    defaultScale = new Vector3(0.45f, 0.6f, 0.45f),
+                    description = "Decorative flower pot with vibrant blossoms.",
+                    iconName = "icon_pot_flower"
                 }
             };
         }

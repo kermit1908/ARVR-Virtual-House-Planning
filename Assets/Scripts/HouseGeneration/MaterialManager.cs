@@ -150,6 +150,38 @@ namespace HousePlanner.HouseGeneration
         }
 
         /// <summary>
+        /// Creates a material for window or balcony safety grills with metallic properties.
+        /// </summary>
+        public Material CreateGrillMaterial(Color color)
+        {
+            string key = $"grill_{ColorUtility.ToHtmlStringRGBA(color)}";
+            Material mat = GetOrCreateMaterial(key, color, 0.75f);
+            if (mat.HasProperty("_Metallic"))
+            {
+                mat.SetFloat("_Metallic", 0.85f);
+            }
+            return mat;
+        }
+
+        /// <summary>
+        /// Creates a door material with the specified wood stain or paint color.
+        /// </summary>
+        public Material CreateDoorMaterial(Color color)
+        {
+            string key = $"door_{ColorUtility.ToHtmlStringRGBA(color)}";
+            return GetOrCreateMaterial(key, color, 0.45f);
+        }
+
+        /// <summary>
+        /// Creates a material for pots and planters (terracotta, ceramic, stone).
+        /// </summary>
+        public Material CreatePlantPotMaterial(Color color, bool isCeramic = false)
+        {
+            string key = $"pot_{ColorUtility.ToHtmlStringRGBA(color)}_{(isCeramic ? "ceramic" : "matte")}";
+            return GetOrCreateMaterial(key, color, isCeramic ? 0.65f : 0.2f);
+        }
+
+        /// <summary>
         /// Creates a material for furniture instances.
         /// </summary>
         public Material CreateFurnitureMaterial(string id, Color color)

@@ -81,6 +81,14 @@ namespace HousePlanner.Furniture
                 case "Rug":
                     BuildRug(root, tintColor);
                     break;
+                case "PlantPot_Terracotta":
+                case "PlantPot_Ceramic":
+                case "PlantPot_GardenUrn":
+                case "FlowerPot":
+                case "Pot":
+                case "PottedPlant":
+                    BuildPlantPot(root, catalogueId, tintColor);
+                    break;
                 default:
                     BuildDefaultBox(root, customScale, tintColor);
                     break;
@@ -303,6 +311,74 @@ namespace HousePlanner.Furniture
         {
             Color rugColor = color != Color.white ? color : new Color(0.65f, 0.25f, 0.25f);
             CreatePart(root, "RugMat", new Vector3(0f, 0.01f, 0f), new Vector3(2.0f, 0.02f, 1.5f), rugColor);
+        }
+
+        private static void BuildPlantPot(GameObject root, string catalogueId, Color color)
+        {
+            Color potColor;
+            if (color != Color.white)
+            {
+                potColor = color;
+            }
+            else if (catalogueId.Contains("Ceramic"))
+            {
+                potColor = new Color(0.95f, 0.95f, 0.96f);
+            }
+            else if (catalogueId.Contains("Urn"))
+            {
+                potColor = new Color(0.48f, 0.46f, 0.44f);
+            }
+            else
+            {
+                // Classic warm terracotta
+                potColor = new Color(0.76f, 0.38f, 0.22f);
+            }
+
+            Color soilColor = new Color(0.24f, 0.16f, 0.10f);
+            Color leafColor = new Color(0.18f, 0.55f, 0.24f);
+            Color leafLightColor = new Color(0.28f, 0.68f, 0.32f);
+            Color flowerColor = new Color(0.92f, 0.28f, 0.38f);
+
+            // 1. Pot Base & Rim
+            CreatePart(root, "PotBase", new Vector3(0f, 0.2f, 0f), new Vector3(0.42f, 0.4f, 0.42f), potColor);
+            CreatePart(root, "PotRim", new Vector3(0f, 0.41f, 0f), new Vector3(0.46f, 0.06f, 0.46f), potColor);
+
+            // 2. Potting Soil
+            CreatePart(root, "Soil", new Vector3(0f, 0.39f, 0f), new Vector3(0.38f, 0.04f, 0.38f), soilColor);
+
+            // 3. Foliage based on pot type
+            if (catalogueId.Contains("Ceramic"))
+            {
+                // Upright sword leaves (Snake plant)
+                CreatePart(root, "StemCenter", new Vector3(0f, 0.62f, 0f), new Vector3(0.08f, 0.45f, 0.04f), leafColor);
+                CreatePart(root, "Leaf1", new Vector3(-0.08f, 0.58f, 0.04f), new Vector3(0.06f, 0.38f, 0.04f), leafLightColor);
+                CreatePart(root, "Leaf2", new Vector3(0.08f, 0.58f, -0.04f), new Vector3(0.06f, 0.38f, 0.04f), leafLightColor);
+                CreatePart(root, "Leaf3", new Vector3(0.04f, 0.54f, 0.08f), new Vector3(0.06f, 0.32f, 0.04f), leafColor);
+                CreatePart(root, "Leaf4", new Vector3(-0.04f, 0.54f, -0.08f), new Vector3(0.06f, 0.32f, 0.04f), leafColor);
+            }
+            else if (catalogueId.Contains("Flower"))
+            {
+                // Bush with colorful blossoms
+                CreatePart(root, "FoliageBush", new Vector3(0f, 0.55f, 0f), new Vector3(0.42f, 0.28f, 0.42f), leafColor);
+                CreatePart(root, "Blossom1", new Vector3(-0.08f, 0.68f, 0.06f), new Vector3(0.08f, 0.08f, 0.08f), flowerColor);
+                CreatePart(root, "Blossom2", new Vector3(0.09f, 0.66f, -0.05f), new Vector3(0.08f, 0.08f, 0.08f), flowerColor);
+                CreatePart(root, "Blossom3", new Vector3(0f, 0.72f, 0f), new Vector3(0.09f, 0.09f, 0.09f), new Color(0.98f, 0.78f, 0.22f));
+            }
+            else if (catalogueId.Contains("Urn"))
+            {
+                // Palm fronds
+                CreatePart(root, "PalmStem", new Vector3(0f, 0.55f, 0f), new Vector3(0.08f, 0.3f, 0.08f), new Color(0.35f, 0.25f, 0.15f));
+                CreatePart(root, "FrondNorth", new Vector3(0f, 0.75f, 0.2f), new Vector3(0.12f, 0.18f, 0.4f), leafColor);
+                CreatePart(root, "FrondSouth", new Vector3(0f, 0.75f, -0.2f), new Vector3(0.12f, 0.18f, 0.4f), leafColor);
+                CreatePart(root, "FrondEast", new Vector3(0.2f, 0.75f, 0f), new Vector3(0.4f, 0.18f, 0.12f), leafLightColor);
+                CreatePart(root, "FrondWest", new Vector3(-0.2f, 0.75f, 0f), new Vector3(0.4f, 0.18f, 0.12f), leafLightColor);
+            }
+            else
+            {
+                // Standard lush terracotta bush
+                CreatePart(root, "BushMain", new Vector3(0f, 0.58f, 0f), new Vector3(0.38f, 0.32f, 0.38f), leafColor);
+                CreatePart(root, "BushTop", new Vector3(0.04f, 0.70f, -0.02f), new Vector3(0.24f, 0.18f, 0.24f), leafLightColor);
+            }
         }
 
         private static void BuildDefaultBox(GameObject root, Vector3 scale, Color color)

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api } from '../../lib/api';
-import { Home, LogIn, AlertCircle } from 'lucide-react';
+import { Home, LogIn, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,32 +29,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 bg-architectural-grid text-slate-900 flex flex-col justify-center py-12 px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link href="/" className="inline-flex items-center gap-2 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/30">
+        <Link href="/" className="inline-flex items-center gap-2.5 mb-4 group">
+          <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center shadow-md shadow-red-600/25 group-hover:scale-105 transition">
             <Home className="w-5 h-5 text-white" />
           </div>
-          <span className="font-black text-xl text-white tracking-tight">SMARTBUILD</span>
+          <span className="font-extrabold text-2xl tracking-tight text-slate-950">SMARTBUILD</span>
         </Link>
-        <h2 className="text-2xl font-bold text-white tracking-tight">Sign in to your account</h2>
-        <p className="mt-1 text-xs text-slate-400">
-          Enter your registered email and password to access your BIM projects.
+        <h2 className="text-2xl font-black text-slate-950 tracking-tight">Sign in to your account</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Access your residential BIM projects, 3D floor plans, and 5D cost estimates.
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-slate-900 border border-slate-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+        <div className="bg-white border border-slate-200/90 py-8 px-6 shadow-xl shadow-slate-200/50 rounded-2xl sm:px-10">
           {error && (
-            <div className="mb-4 bg-rose-950/40 border border-rose-800/60 p-3 rounded-lg text-xs text-rose-300 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="mb-4 bg-red-50 border border-red-200 p-3 rounded-xl text-xs text-red-700 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Email Address
               </label>
               <input
@@ -62,13 +62,13 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@university.edu"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                placeholder="architect@university.edu"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Password
               </label>
               <input
@@ -77,23 +77,23 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-sm shadow-lg shadow-red-600/25 flex items-center justify-center gap-2 transition"
+              className="w-full mt-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md shadow-red-600/25 transition flex items-center justify-center gap-2"
             >
-              <LogIn className="w-4 h-4" />
-              {loading ? 'Authenticating...' : 'Sign In'}
+              {loading ? 'Authenticating...' : 'Sign in to Workspace'}
+              <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-slate-400 border-t border-slate-800 pt-4">
-            Don't have an account yet?{' '}
-            <Link href="/signup" className="text-red-400 hover:text-red-300 font-semibold">
+          <div className="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-500">
+            <span>Don't have an account? </span>
+            <Link href="/signup" className="font-bold text-red-600 hover:underline">
               Create an account
             </Link>
           </div>

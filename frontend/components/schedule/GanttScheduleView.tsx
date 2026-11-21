@@ -29,7 +29,7 @@ export default function GanttScheduleView({ projectId }: GanttScheduleViewProps)
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-slate-400">
+      <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-500 shadow-sm">
         Generating 4D construction schedule and critical path analysis...
       </div>
     );
@@ -40,42 +40,42 @@ export default function GanttScheduleView({ projectId }: GanttScheduleViewProps)
   const totalDays = schedule.total_duration_days;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-slate-200 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-800 shadow-sm space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-4">
         <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-red-500" />
+          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-red-600" />
             4D BIM Construction Schedule & Gantt Timeline
           </h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Milestone sequencing and duration calculation using Critical Path Method (CPM) calibrated for residential construction.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-xs">
+        <div className="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 text-xs">
           <div>
-            <span className="text-slate-400 block">Total Duration:</span>
-            <span className="font-bold text-white text-sm">{schedule.total_duration_days} Days</span>
+            <span className="text-slate-500 block">Total Duration:</span>
+            <span className="font-bold text-slate-900 text-sm">{schedule.total_duration_days} Days</span>
           </div>
-          <span className="text-slate-700">|</span>
+          <span className="text-slate-300">|</span>
           <div>
-            <span className="text-slate-400 block">Start Date:</span>
-            <span className="font-medium text-slate-300">{schedule.start_date}</span>
+            <span className="text-slate-500 block">Start Date:</span>
+            <span className="font-medium text-slate-700">{schedule.start_date}</span>
           </div>
-          <span className="text-slate-700">|</span>
+          <span className="text-slate-300">|</span>
           <div>
-            <span className="text-slate-400 block">Est. Completion:</span>
-            <span className="font-semibold text-emerald-400">{schedule.estimated_completion_date}</span>
+            <span className="text-slate-500 block">Est. Completion:</span>
+            <span className="font-semibold text-emerald-600">{schedule.estimated_completion_date}</span>
           </div>
         </div>
       </div>
 
       {/* Gantt Chart Visualizer */}
-      <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-4">
         {/* Day Header Ruler */}
-        <div className="grid grid-cols-12 gap-1 text-[10px] text-slate-500 font-mono pb-2 border-b border-slate-800 mb-3">
-          <div className="col-span-4 font-semibold text-slate-400">Task Milestone</div>
+        <div className="grid grid-cols-12 gap-1 text-[10px] text-slate-500 font-mono pb-2 border-b border-slate-200 mb-3">
+          <div className="col-span-4 font-semibold text-slate-700">Task Milestone</div>
           <div className="col-span-8 flex justify-between">
             <span>Day 0</span>
             <span>Day {Math.round(totalDays * 0.25)}</span>
@@ -101,19 +101,19 @@ export default function GanttScheduleView({ projectId }: GanttScheduleViewProps)
             return (
               <div key={task.id} className="grid grid-cols-12 gap-2 items-center text-xs group">
                 <div className="col-span-4 pr-2">
-                  <div className="font-semibold text-slate-200 truncate">{task.name}</div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1.5">
-                    <span className="font-mono text-slate-400">{task.id}</span>
+                  <div className="font-semibold text-slate-900 truncate">{task.name}</div>
+                  <div className="text-[10px] text-slate-500 flex items-center gap-1.5">
+                    <span className="font-mono text-slate-600">{task.id}</span>
                     <span>•</span>
                     <span>{task.duration_days} days</span>
                     <span>•</span>
-                    <span className="text-slate-400 truncate">{task.assigned_crew}</span>
+                    <span className="text-slate-600 truncate">{task.assigned_crew}</span>
                   </div>
                 </div>
 
-                <div className="col-span-8 relative h-7 bg-slate-900/80 rounded-md border border-slate-800/80 flex items-center">
+                <div className="col-span-8 relative h-7 bg-white rounded-lg border border-slate-200 flex items-center">
                   <div
-                    className={`absolute h-5 rounded ${stageColor} shadow text-[10px] text-white font-medium flex items-center px-2 truncate transition-all duration-300`}
+                    className={`absolute h-5 rounded-md ${stageColor} shadow-sm text-[10px] text-white font-medium flex items-center px-2 truncate transition-all duration-300`}
                     style={{
                       left: `${leftPercent}%`,
                       width: `${widthPercent}%`,
@@ -130,8 +130,8 @@ export default function GanttScheduleView({ projectId }: GanttScheduleViewProps)
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2 border-t border-slate-800">
-        <span className="font-semibold text-slate-300">Stages:</span>
+      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 pt-2 border-t border-slate-200">
+        <span className="font-semibold text-slate-800">Stages:</span>
         <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded bg-amber-600" /> Substructure</span>
         <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded bg-indigo-600" /> Superstructure (RCC & Walls)</span>
         <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded bg-cyan-600" /> MEP Services</span>

@@ -52,14 +52,14 @@ export default function ProjectReportView({ projectId }: ProjectReportViewProps)
         <a
           href="/SMARTBUILD_ARVR_Academic_Report.pdf"
           download="SMARTBUILD_ARVR_Academic_Report.pdf"
-          className="bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg border border-slate-700 flex items-center gap-2 transition shadow-md"
+          className="bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs px-4 py-2.5 rounded-xl border border-slate-200 flex items-center gap-2 transition shadow-sm"
         >
-          <Download className="w-4 h-4 text-red-500" />
+          <Download className="w-4 h-4 text-red-600" />
           Download IEEE Paper PDF
         </a>
         <button
           onClick={handlePrint}
-          className="bg-red-600 hover:bg-red-500 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transition"
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md flex items-center gap-2 transition"
         >
           <Printer className="w-4 h-4" />
           Print / Save as PDF

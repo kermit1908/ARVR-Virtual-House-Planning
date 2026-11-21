@@ -15,7 +15,10 @@ import {
   Trash2, 
   Layers, 
   X,
-  FolderOpen
+  FolderOpen,
+  Sparkles,
+  Building2,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -92,33 +95,36 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
-        Loading user workspace...
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500 text-sm font-sans">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+          <span>Loading user workspace...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top Navbar */}
-      <header className="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-md shadow-red-600/30">
+    <div className="min-h-screen bg-slate-50 bg-architectural-grid text-slate-900 flex flex-col font-sans">
+      {/* Top Navbar matching Landing Page */}
+      <header className="border-b border-slate-200 bg-white/95 sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-md shadow-red-600/25 group-hover:scale-105 transition">
               <Home className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white tracking-tight">SMARTBUILD Workspace</span>
+            <span className="font-extrabold text-xl text-slate-950 tracking-tight">SMARTBUILD Workspace</span>
           </Link>
 
           <div className="flex items-center gap-4 text-xs">
-            <span className="text-slate-400 hidden sm:inline">
-              Signed in as <strong className="text-white">{user?.full_name}</strong>
+            <span className="text-slate-600 hidden sm:inline">
+              Signed in as <strong className="text-slate-900 font-bold">{user?.full_name}</strong>
             </span>
             <button
               onClick={handleLogout}
-              className="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition"
+              className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold flex items-center gap-1.5 transition shadow-xs"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-slate-500" />
               Sign Out
             </button>
           </div>
@@ -127,18 +133,22 @@ export default function DashboardPage() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-6 py-10 w-full space-y-8 flex-1">
-        {/* Workspace Greeting & Stats */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+        {/* Workspace Greeting & Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
           <div>
-            <h1 className="text-2xl font-black text-white">Residential BIM Projects</h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Select an active project or initialize a new residential floor plan to launch 3D, AR/VR, and 5D cost analysis.
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 text-[11px] font-bold uppercase tracking-wider mb-2">
+              <Building2 className="w-3.5 h-3.5 text-red-600" />
+              Active Project Portfolio
+            </div>
+            <h1 className="text-3xl font-black text-slate-950 tracking-tight">Residential BIM Projects</h1>
+            <p className="text-xs text-slate-500 mt-1 max-w-xl">
+              Select an active project or initialize a new residential floor plan to launch 3D BIM visualization, AR/VR walkthrough, and 5D cost analysis.
             </p>
           </div>
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow-lg shadow-red-600/25 flex items-center gap-2 transition"
+            className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md shadow-red-600/25 flex items-center gap-2 transition shrink-0"
           >
             <Plus className="w-4 h-4" />
             Create New Project
@@ -147,18 +157,19 @@ export default function DashboardPage() {
 
         {/* Project Cards Grid */}
         {projects.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-slate-800 text-red-500 flex items-center justify-center mx-auto">
-              <FolderOpen className="w-6 h-6" />
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-12 text-center space-y-4 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center mx-auto shadow-xs">
+              <FolderOpen className="w-7 h-7" />
             </div>
-            <h3 className="font-bold text-white text-base">No Residential Projects Yet</h3>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            <h3 className="font-bold text-slate-950 text-base">No Residential Projects Yet</h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
               Start by creating your first residential project. Define your plot boundaries and let SMARTBUILD extrude the BIM building model.
             </p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-red-600 hover:bg-red-500 text-white font-semibold text-xs px-4 py-2 rounded-lg transition"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-md shadow-red-600/25 transition inline-flex items-center gap-2"
             >
+              <Plus className="w-4 h-4" />
               Create Project
             </button>
           </div>
@@ -168,49 +179,49 @@ export default function DashboardPage() {
               <div
                 key={proj.id}
                 onClick={() => router.push(`/projects/${proj.id}`)}
-                className="bg-slate-900 border border-slate-800 hover:border-red-500/50 rounded-2xl p-5 shadow-xl hover:shadow-red-500/5 transition cursor-pointer flex flex-col justify-between group"
+                className="bg-white border border-slate-200/90 hover:border-red-500/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:shadow-red-600/10 transition duration-200 cursor-pointer flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/60">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
                       {proj.status.replace('_', ' ')}
                     </span>
                     <button
                       onClick={(e) => handleDeleteProject(proj.id, e)}
-                      className="text-slate-600 hover:text-rose-400 transition p-1"
+                      className="text-slate-400 hover:text-red-600 transition p-1"
                       title="Delete Project"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <h3 className="text-base font-bold text-white group-hover:text-red-400 transition truncate">
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-red-600 transition truncate">
                     {proj.name}
                   </h3>
-                  <p className="text-xs text-slate-400 line-clamp-2 mt-1">
+                  <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
                     {proj.description || 'Custom parametric residential villa layout.'}
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2 text-xs">
-                  <div className="flex justify-between text-slate-400">
-                    <span className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                <div className="mt-6 pt-4 border-t border-slate-100 space-y-2 text-xs">
+                  <div className="flex justify-between text-slate-500">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-red-600" />
                       {proj.location}
                     </span>
-                    <span className="font-mono text-slate-300">
+                    <span className="font-mono text-slate-700 font-semibold">
                       {proj.plot_area} m² Plot
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs pt-1">
                     <span className="text-slate-500">Estimated Cost:</span>
-                    <span className="font-bold text-white font-mono">
+                    <span className="font-bold text-slate-900 font-mono text-sm">
                       {formatLakhs(proj.estimated_cost)}
                     </span>
                   </div>
 
-                  <div className="pt-2 flex items-center justify-end text-red-400 text-xs font-semibold group-hover:translate-x-1 transition-transform">
+                  <div className="pt-2 flex items-center justify-end text-red-600 text-xs font-bold group-hover:translate-x-1 transition-transform">
                     Open Project Workspace <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </div>
                 </div>
@@ -222,46 +233,48 @@ export default function DashboardPage() {
 
       {/* Create Project Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-              <h3 className="font-bold text-white text-base">Create New Residential Project</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-white">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-950 text-base">Create New Residential Project</h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Project Name</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">Project Name</label>
                 <input
                   type="text"
                   required
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="e.g. Modern 3BHK Eco-Villa"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Regional Location (Rate Schedule)</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">Regional Location (Rate Schedule)</label>
                 <select
                   value={newLocation}
                   onChange={(e) => setNewLocation(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
                 >
                   <option value="Bengaluru">Bengaluru (Karnataka PWD DSR)</option>
                   <option value="Chennai">Chennai (Tamil Nadu PWD)</option>
                   <option value="Hyderabad">Hyderabad (Telangana PWD)</option>
                   <option value="Delhi">Delhi NCR (CPWD DSR)</option>
                   <option value="Mumbai">Mumbai (Maharashtra PWD)</option>
+                  <option value="Pune">Pune (Maharashtra PWD)</option>
+                  <option value="Kolkata">Kolkata (West Bengal PWD)</option>
                 </select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">Plot Width (m)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1.5">Plot Width (m)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -269,11 +282,11 @@ export default function DashboardPage() {
                     max="100"
                     value={newWidth}
                     onChange={(e) => setNewWidth(parseFloat(e.target.value) || 12)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">Plot Length (m)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1.5">Plot Length (m)</label>
                   <input
                     type="number"
                     step="0.5"
@@ -281,34 +294,34 @@ export default function DashboardPage() {
                     max="100"
                     value={newLength}
                     onChange={(e) => setNewLength(parseFloat(e.target.value) || 15)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Project Description (Optional)</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">Project Description (Optional)</label>
                 <textarea
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
                   placeholder="e.g. Sustainable G+1 family house with terrace solar."
                   rows={2}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 resize-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 resize-none transition"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2.5 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-md shadow-red-600/25 transition"
+                  className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-red-600/25 transition"
                 >
                   {creating ? 'Creating...' : 'Initialize Project'}
                 </button>

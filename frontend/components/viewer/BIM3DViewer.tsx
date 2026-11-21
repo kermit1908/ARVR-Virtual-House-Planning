@@ -125,6 +125,7 @@ export default function BIM3DViewer({
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const meshMapRef = useRef<Map<string, { mesh: THREE.Mesh; element: BIMElement }>>(new Map());
   const selectedMeshRef = useRef<THREE.Mesh | null>(null);
+  const boxHelperRef = useRef<THREE.BoxHelper | null>(null);
   const grillsGroupRef = useRef<THREE.Group | null>(null);
   const potsGroupRef = useRef<THREE.Group | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -525,8 +526,28 @@ export default function BIM3DViewer({
         matRoughness = 0.45;
         matMetalness = 0.05;
       } else if (elem.type === 'Floor') {
-        matColor = 0x94a3b8;
-        matRoughness = 0.4;
+        const matType = (elem.material || '').toLowerCase();
+        if (matType.includes('hardwood') || matType.includes('wood')) {
+          matColor = 0xb45309; // Warm rich teak / hardwood
+          matRoughness = 0.55;
+          matMetalness = 0.05;
+        } else if (matType.includes('marble')) {
+          matColor = 0xf8fafc; // Polished Italian white marble
+          matRoughness = 0.15;
+          matMetalness = 0.12;
+        } else if (matType.includes('ceramic')) {
+          matColor = 0xe2e8f0; // Glazed ceramic tiles
+          matRoughness = 0.28;
+          matMetalness = 0.08;
+        } else if (matType.includes('granite')) {
+          matColor = 0x334155; // Dark polished granite
+          matRoughness = 0.22;
+          matMetalness = 0.15;
+        } else {
+          matColor = 0xcbd5e1; // Vitrified tiles
+          matRoughness = 0.35;
+          matMetalness = 0.05;
+        }
       } else if (elem.type === 'Roof') {
         matColor = 0x475569;
         matRoughness = 0.7;
@@ -715,15 +736,17 @@ export default function BIM3DViewer({
         const elemData = hit.userData.bimElement as BIMElement;
 
         // Reset previous highlight
-        if (selectedMeshRef.current && (selectedMeshRef.current.material as THREE.MeshStandardMaterial).emissive) {
-          (selectedMeshRef.current.material as THREE.MeshStandardMaterial).emissive.setHex(0x000000);
+        if (boxHelperRef.current && sceneRef.current) {
+          sceneRef.current.remove(boxHelperRef.current);
+          boxHelperRef.current.dispose();
+          boxHelperRef.current = null;
         }
 
-        // Highlight new selection with crimson glow
+        // Highlight new selection with precise architectural bounding outline
         selectedMeshRef.current = hit;
-        if ((hit.material as THREE.MeshStandardMaterial).emissive) {
-          (hit.material as THREE.MeshStandardMaterial).emissive.setHex(0xdc2626);
-        }
+        const boxHelper = new THREE.BoxHelper(hit, 0xdc2626);
+        scene.add(boxHelper);
+        boxHelperRef.current = boxHelper;
 
         setSelectedElement(elemData);
         setSelectedPot(null);
@@ -738,8 +761,10 @@ export default function BIM3DViewer({
         }
       } else {
         // Deselect when clicking empty space
-        if (selectedMeshRef.current && (selectedMeshRef.current.material as THREE.MeshStandardMaterial).emissive) {
-          (selectedMeshRef.current.material as THREE.MeshStandardMaterial).emissive.setHex(0x000000);
+        if (boxHelperRef.current && sceneRef.current) {
+          sceneRef.current.remove(boxHelperRef.current);
+          boxHelperRef.current.dispose();
+          boxHelperRef.current = null;
         }
         selectedMeshRef.current = null;
         setSelectedElement(null);
@@ -780,6 +805,11 @@ export default function BIM3DViewer({
       window.removeEventListener('mouseup', onMouseUp);
       dom.removeEventListener('wheel', onWheel);
       dom.removeEventListener('click', onClick);
+      if (boxHelperRef.current && sceneRef.current) {
+        sceneRef.current.remove(boxHelperRef.current);
+        boxHelperRef.current.dispose();
+        boxHelperRef.current = null;
+      }
       resizeObserver.disconnect();
       renderer.dispose();
     };
@@ -799,6 +829,7 @@ export default function BIM3DViewer({
         mat.needsUpdate = true;
       }
     });
+    boxHelperRef.current?.update();
   }, [wallColor, wallFinish, customWallColors]);
 
   // -------------------------------------------------------------
@@ -1028,7 +1059,7 @@ export default function BIM3DViewer({
   };
 
   return (
-    <div className="relative w-full h-[640px] rounded-xl overflow-hidden border border-slate-700 bg-slate-950 shadow-2xl flex flex-col select-none">
+    <div className="relative w-full h-[640px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 shadow-xl flex flex-col select-none">
       {/* 3D Viewport canvas container */}
       <div 
         ref={containerRef} 
@@ -1051,41 +1082,41 @@ export default function BIM3DViewer({
 
       {/* Top Floating Controls Bar */}
       <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-20">
-        <div className="bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-lg border border-slate-700 text-xs text-slate-300 pointer-events-auto flex items-center gap-3 shadow-lg">
-          <span className="font-semibold text-red-500 flex items-center gap-1.5">
+        <div className="bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 pointer-events-auto flex items-center gap-3 shadow-lg">
+          <span className="font-semibold text-red-600 flex items-center gap-1.5">
             <Box className="w-3.5 h-3.5" />
             3D BIM Studio
           </span>
-          <span className="text-slate-500">|</span>
-          <span>{elements.length} Components</span>
-          <span className="text-slate-500">|</span>
-          <span>{builtupArea} m²</span>
-          <span className="text-slate-500">|</span>
-          <span>{pots.length} {pots.length === 1 ? 'Pot' : 'Pots'}</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-600 font-medium">{elements.length} Components</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-600 font-medium">{builtupArea} m²</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-600 font-medium">{pots.length} {pots.length === 1 ? 'Pot' : 'Pots'}</span>
         </div>
 
         <div className="flex items-center gap-2 pointer-events-auto">
           {/* Main Customization Toggle Button */}
           <button
             onClick={() => setShowCustomizer(!showCustomizer)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-lg ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 shadow-md ${
               showCustomizer 
-                ? 'bg-gradient-to-r from-red-600 to-rose-600 border-red-400 text-white shadow-red-600/40 ring-2 ring-red-500/50' 
-                : 'bg-slate-800/95 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white'
+                ? 'bg-red-600 border-red-500 text-white shadow-red-600/30 ring-2 ring-red-500/40' 
+                : 'bg-white/95 border-slate-200 text-slate-800 hover:bg-slate-50 hover:text-red-600'
             }`}
             title="Open 3D Finishes, Wall Paint, Grill Color & Pots Customizer"
           >
-            <Palette className="w-3.5 h-3.5 text-rose-400" />
+            <Palette className={`w-3.5 h-3.5 ${showCustomizer ? 'text-white' : 'text-red-600'}`} />
             <span>Customize Finishes & Decor</span>
-            <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
+            <span className={`w-2 h-2 rounded-full ${showCustomizer ? 'bg-white' : 'bg-red-600'} animate-ping`} />
           </button>
 
           <button
             onClick={handleToggleCeilings}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 shadow ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium border transition-colors flex items-center gap-1.5 shadow-sm ${
               showCeilings 
                 ? 'bg-red-600 border-red-500 text-white shadow-red-600/30' 
-                : 'bg-slate-800/90 border-slate-700 text-slate-300 hover:bg-slate-700'
+                : 'bg-white/95 border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -1094,10 +1125,10 @@ export default function BIM3DViewer({
 
           <button
             onClick={handleToggleRoof}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 shadow ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium border transition-colors flex items-center gap-1.5 shadow-sm ${
               showRoof 
                 ? 'bg-red-600 border-red-500 text-white shadow-red-600/30' 
-                : 'bg-slate-800/90 border-slate-700 text-slate-300 hover:bg-slate-700'
+                : 'bg-white/95 border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >
             <Box className="w-3.5 h-3.5" />
@@ -1107,7 +1138,7 @@ export default function BIM3DViewer({
           {isRecording ? (
             <button
               onClick={stopRecording}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-1.5 shadow-lg animate-pulse"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-lg animate-pulse"
               title="Stop Recording and Download Video"
             >
               <StopCircle className="w-3.5 h-3.5" />
@@ -1116,17 +1147,17 @@ export default function BIM3DViewer({
           ) : (
             <button
               onClick={startRecording}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center gap-1.5 shadow"
+              className="px-3.5 py-2 rounded-xl text-xs font-medium bg-white/95 border border-slate-200 text-slate-700 hover:text-red-600 hover:bg-slate-50 transition flex items-center gap-1.5 shadow-sm"
               title="Record Walkthrough Video (WebM)"
             >
-              <Video className="w-3.5 h-3.5 text-rose-400" />
+              <Video className="w-3.5 h-3.5 text-red-600" />
               Record Video
             </button>
           )}
 
           <button
             onClick={handleResetCamera}
-            className="p-2 rounded-lg bg-slate-800/90 border border-slate-700 text-slate-300 hover:bg-slate-700 transition shadow"
+            className="p-2.5 rounded-xl bg-white/95 border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-red-600 transition shadow-sm"
             title="Reset Camera View"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -1138,29 +1169,29 @@ export default function BIM3DViewer({
       {/* 3D CUSTOMIZATION DRAWER PANEL                             */}
       {/* ========================================================= */}
       {showCustomizer && (
-        <div className="absolute top-16 right-4 bottom-14 w-84 max-w-[340px] bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl flex flex-col z-30 animate-in fade-in slide-in-from-right duration-200 overflow-hidden">
+        <div className="absolute top-16 right-4 bottom-14 w-84 max-w-[340px] bg-white/95 backdrop-blur-xl border border-slate-200 text-slate-900 rounded-2xl shadow-2xl flex flex-col z-30 animate-in fade-in slide-in-from-right duration-200 overflow-hidden">
           {/* Header */}
-          <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-rose-500" />
-              <h2 className="text-xs font-bold text-white tracking-wide uppercase">3D Finishes & Decor</h2>
+              <Sparkles className="w-4 h-4 text-red-600" />
+              <h2 className="text-xs font-bold text-slate-900 tracking-wide uppercase">3D Finishes & Decor</h2>
             </div>
             <button
               onClick={() => setShowCustomizer(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center border-b border-slate-800 bg-slate-950/40 p-1 gap-1 text-[11px] font-semibold">
+          <div className="flex items-center border-b border-slate-200 bg-slate-100/70 p-1 gap-1 text-[11px] font-semibold">
             <button
               onClick={() => setActiveTab('wall')}
               className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition ${
                 activeTab === 'wall' 
-                  ? 'bg-rose-600 text-white shadow' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-red-600 text-white shadow' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
               }`}
             >
               <Palette className="w-3.5 h-3.5" />
@@ -1171,8 +1202,8 @@ export default function BIM3DViewer({
               onClick={() => setActiveTab('door')}
               className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition ${
                 activeTab === 'door' 
-                  ? 'bg-rose-600 text-white shadow' 
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-red-600 text-white shadow' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
               }`}
             >
               <DoorOpen className="w-3.5 h-3.5" />
@@ -1183,8 +1214,8 @@ export default function BIM3DViewer({
               onClick={() => setActiveTab('grill')}
               className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition ${
                 activeTab === 'grill' 
-                  ? 'bg-rose-600 text-white shadow' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-red-600 text-white shadow' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
               }`}
             >
               <Shield className="w-3.5 h-3.5" />
@@ -1195,8 +1226,8 @@ export default function BIM3DViewer({
               onClick={() => setActiveTab('pots')}
               className={`flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1 transition ${
                 activeTab === 'pots' 
-                  ? 'bg-rose-600 text-white shadow' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  ? 'bg-red-600 text-white shadow' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
               }`}
             >
               <Flower2 className="w-3.5 h-3.5" />
@@ -1773,11 +1804,11 @@ export default function BIM3DViewer({
 
       {/* Selected Element BIM Metadata Inspector Card */}
       {selectedElement && !showCustomizer && (
-        <div className="absolute bottom-4 left-4 max-w-sm w-full bg-slate-900/95 backdrop-blur-md border border-red-500/50 rounded-xl p-4 text-xs text-slate-300 shadow-2xl animate-fade-in z-20">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-700">
+        <div className="absolute bottom-4 left-4 max-w-sm w-full bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl p-4 text-xs text-slate-800 shadow-2xl animate-fade-in z-20">
+          <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-200">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-              <span className="font-bold text-sm text-white">{selectedElement.type} Element</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+              <span className="font-bold text-sm text-slate-900">{selectedElement.type} Element</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1787,50 +1818,50 @@ export default function BIM3DViewer({
                   if (selectedElement.type === 'Door') setActiveTab('door');
                   if (selectedElement.type === 'Window') setActiveTab('grill');
                 }}
-                className="px-2 py-0.5 rounded bg-rose-600/80 hover:bg-rose-600 text-white text-[10px] font-semibold"
+                className="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-semibold transition shadow-sm"
               >
                 Customize
               </button>
               <button
                 onClick={() => setSelectedElement(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-700"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-slate-400">
+          <div className="grid grid-cols-2 gap-2 text-slate-600">
             <div>
-              <span className="text-slate-500 block">Element ID:</span>
-              <span className="font-mono text-slate-200">{selectedElement.id.slice(0, 14)}</span>
+              <span className="text-slate-400 block text-[10px]">Element ID:</span>
+              <span className="font-mono text-slate-800 font-medium">{selectedElement.id.slice(0, 14)}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Room / Zone:</span>
-              <span className="text-slate-200 font-medium">{selectedElement.room_name || 'Envelope'}</span>
+              <span className="text-slate-400 block text-[10px]">Room / Zone:</span>
+              <span className="text-slate-800 font-medium">{selectedElement.room_name || 'Envelope'}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Material:</span>
-              <span className="text-slate-200 font-medium">{selectedElement.material}</span>
+              <span className="text-slate-400 block text-[10px]">Material:</span>
+              <span className="text-slate-800 font-medium">{selectedElement.material}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Floor Level:</span>
-              <span className="text-slate-200">Level {selectedElement.floor_level}</span>
+              <span className="text-slate-400 block text-[10px]">Floor Level:</span>
+              <span className="text-slate-800 font-medium">Level {selectedElement.floor_level}</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Surface Area:</span>
-              <span className="text-red-400 font-semibold">{selectedElement.area.toFixed(2)} m²</span>
+              <span className="text-slate-400 block text-[10px]">Surface Area:</span>
+              <span className="text-red-600 font-semibold">{selectedElement.area.toFixed(2)} m²</span>
             </div>
             <div>
-              <span className="text-slate-500 block">Volume:</span>
-              <span className="text-red-400 font-semibold">{selectedElement.volume.toFixed(3)} m³</span>
+              <span className="text-slate-400 block text-[10px]">Volume:</span>
+              <span className="text-red-600 font-semibold">{selectedElement.volume.toFixed(3)} m³</span>
             </div>
           </div>
 
           {/* Quick Color Swatches directly on Inspector Card */}
           {selectedElement.type === 'Wall' && (
-            <div className="mt-3 pt-2.5 border-t border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-1.5 font-medium">Quick Wall Paint:</span>
+            <div className="mt-3 pt-2.5 border-t border-slate-200">
+              <span className="text-[11px] text-slate-600 block mb-1.5 font-medium">Quick Wall Paint:</span>
               <div className="flex items-center gap-1.5">
                 {WALL_PAINT_PRESETS.slice(0, 7).map(wp => (
                   <button
@@ -1838,7 +1869,7 @@ export default function BIM3DViewer({
                     onClick={() => {
                       setCustomWallColors(prev => ({ ...prev, [selectedElement.id]: wp.hex }));
                     }}
-                    className="w-5 h-5 rounded-md border border-slate-700 transition hover:scale-110"
+                    className="w-5 h-5 rounded-md border border-slate-300 transition hover:scale-110 shadow-xs"
                     style={{ backgroundColor: wp.hex }}
                     title={wp.name}
                   />
@@ -1848,7 +1879,7 @@ export default function BIM3DViewer({
                     setShowCustomizer(true);
                     setActiveTab('wall');
                   }}
-                  className="text-[10px] text-rose-400 hover:underline ml-1"
+                  className="text-[10px] text-red-600 hover:underline ml-1 font-semibold"
                 >
                   More...
                 </button>
@@ -1857,8 +1888,8 @@ export default function BIM3DViewer({
           )}
 
           {selectedElement.type === 'Door' && (
-            <div className="mt-3 pt-2.5 border-t border-slate-800">
-              <span className="text-[11px] text-slate-400 block mb-1.5 font-medium">Quick Door Finish:</span>
+            <div className="mt-3 pt-2.5 border-t border-slate-200">
+              <span className="text-[11px] text-slate-600 block mb-1.5 font-medium">Quick Door Finish:</span>
               <div className="flex items-center gap-1.5">
                 {DOOR_COLOR_PRESETS.slice(0, 6).map(dp => (
                   <button
@@ -1866,7 +1897,7 @@ export default function BIM3DViewer({
                     onClick={() => {
                       setCustomDoorColors(prev => ({ ...prev, [selectedElement.id]: dp.hex }));
                     }}
-                    className="w-5 h-5 rounded-md border border-slate-700 transition hover:scale-110"
+                    className="w-5 h-5 rounded-md border border-slate-300 transition hover:scale-110 shadow-xs"
                     style={{ backgroundColor: dp.hex }}
                     title={dp.name}
                   />
@@ -1876,7 +1907,7 @@ export default function BIM3DViewer({
                     setShowCustomizer(true);
                     setActiveTab('door');
                   }}
-                  className="text-[10px] text-rose-400 hover:underline ml-1"
+                  className="text-[10px] text-red-600 hover:underline ml-1 font-semibold"
                 >
                   More...
                 </button>
@@ -1887,7 +1918,7 @@ export default function BIM3DViewer({
       )}
 
       {/* Bottom Hint */}
-      <div className="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-400 pointer-events-none z-10 flex items-center gap-2">
+      <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 pointer-events-none z-10 flex items-center gap-2 shadow-md">
         <span>Click element to customize • Left drag rotate • Right drag pan • Scroll zoom</span>
       </div>
     </div>

@@ -121,41 +121,41 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-slate-200 shadow-xl space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+    <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-800 shadow-sm space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
         <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Home className="w-5 h-5 text-red-500" />
+          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Home className="w-5 h-5 text-red-600" />
             Parametric House Architecture Configuration
           </h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Define structural parameters or pick from ready-made architectural templates below.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 text-xs">
+        <div className="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 text-xs">
           <div>
-            <span className="text-slate-400 block">Total Built-Up:</span>
-            <span className="font-bold text-red-500 text-sm">{totalBuiltup.toFixed(1)} m²</span>
+            <span className="text-slate-500 block">Total Built-Up:</span>
+            <span className="font-bold text-red-600 text-sm">{totalBuiltup.toFixed(1)} m²</span>
           </div>
-          <span className="text-slate-600">|</span>
+          <span className="text-slate-300">|</span>
           <div>
-            <span className="text-slate-400 block">Plot Ground Area:</span>
-            <span className="font-semibold text-slate-300">{plotArea.toFixed(1)} m²</span>
+            <span className="text-slate-500 block">Plot Ground Area:</span>
+            <span className="font-semibold text-slate-800">{plotArea.toFixed(1)} m²</span>
           </div>
         </div>
       </div>
 
       {/* Architectural Templates Carousel */}
-      <div className="bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 space-y-3">
+      <div className="bg-slate-50/80 border border-slate-200 rounded-2xl p-5 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
               Ready-to-Use Architectural Templates ({HOUSE_TEMPLATES.length} 3D Renders)
             </h4>
           </div>
-          <span className="text-[11px] text-slate-400">Click a template to load its room layout</span>
+          <span className="text-[11px] text-slate-500">Click a template to load its room layout & materials</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1">
@@ -165,20 +165,20 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
               <div
                 key={tmpl.id}
                 onClick={() => handleApplyTemplate(tmpl)}
-                className={`group relative rounded-xl border overflow-hidden cursor-pointer transition flex flex-col justify-between bg-slate-900 ${
+                className={`group relative rounded-xl border overflow-hidden cursor-pointer transition flex flex-col justify-between bg-white ${
                   isSelected
-                    ? 'border-red-500 ring-2 ring-red-500/30 shadow-lg shadow-red-950/50'
-                    : 'border-slate-800 hover:border-slate-700'
+                    ? 'border-red-600 ring-2 ring-red-600/20 shadow-md'
+                    : 'border-slate-200 hover:border-slate-300 shadow-xs'
                 }`}
               >
                 {/* Thumbnail */}
-                <div className="relative aspect-video w-full bg-slate-800 overflow-hidden">
+                <div className="relative aspect-video w-full bg-slate-100 overflow-hidden">
                   <img
                     src={tmpl.image}
                     alt={tmpl.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <span className="absolute top-1.5 left-1.5 bg-black/75 px-1.5 py-0.5 rounded text-[10px] font-bold text-red-400 backdrop-blur-xs">
+                  <span className="absolute top-1.5 left-1.5 bg-slate-900/80 px-1.5 py-0.5 rounded text-[10px] font-bold text-white backdrop-blur-xs">
                     {tmpl.bhk}
                   </span>
                   <button
@@ -187,7 +187,7 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
                       e.stopPropagation();
                       setPreviewImage(tmpl.image);
                     }}
-                    className="absolute top-1.5 right-1.5 p-1 rounded bg-black/60 hover:bg-black/90 text-slate-300 hover:text-white transition"
+                    className="absolute top-1.5 right-1.5 p-1 rounded bg-black/60 hover:bg-black/90 text-white transition"
                     title="Enlarge Image"
                   >
                     <Eye className="w-3 h-3" />
@@ -195,22 +195,22 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
                 </div>
 
                 {/* Info */}
-                <div className="p-2.5 flex-1 flex flex-col justify-between">
+                <div className="p-3 flex-1 flex flex-col justify-between">
                   <div>
-                    <h5 className="font-bold text-xs text-white leading-tight">{tmpl.name}</h5>
-                    <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{tmpl.subtitle}</p>
+                    <h5 className="font-bold text-xs text-slate-900 leading-tight">{tmpl.name}</h5>
+                    <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{tmpl.subtitle}</p>
                   </div>
 
-                  <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-slate-400 font-mono">{tmpl.totalAreaSqm} m²</span>
+                  <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500 font-mono font-medium">{tmpl.totalAreaSqm} m²</span>
                     <span
                       className={`font-semibold flex items-center gap-1 ${
-                        isSelected ? 'text-red-500' : 'text-slate-500 group-hover:text-slate-300'
+                        isSelected ? 'text-red-600' : 'text-slate-400 group-hover:text-slate-700'
                       }`}
                     >
                       {isSelected ? (
                         <>
-                          <CheckCircle2 className="w-3 h-3 text-red-500" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-red-600" />
                           Applied
                         </>
                       ) : (
@@ -228,11 +228,11 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
       {/* Global Parameters */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-1.5">Number of Floors</label>
+          <label className="text-xs font-semibold text-slate-700 block mb-1.5">Number of Floors</label>
           <select
             value={floorsCount}
             onChange={(e) => handleFloorsChange(parseInt(e.target.value))}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-500 outline-none"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-600 focus:border-red-600 outline-none"
           >
             <option value={1}>1 Storey (Ground Floor G+0)</option>
             <option value={2}>2 Storeys (Duplex G+1)</option>
@@ -241,7 +241,7 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-1.5">Floor Height (m)</label>
+          <label className="text-xs font-semibold text-slate-700 block mb-1.5">Floor Height (m)</label>
           <input
             type="number"
             step="0.1"
@@ -249,16 +249,16 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
             max="4.5"
             value={floorHeight}
             onChange={(e) => setFloorHeight(parseFloat(e.target.value) || 3.0)}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-500 outline-none"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-600 focus:border-red-600 outline-none"
           />
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-1.5">Exterior Wall Thickness (m)</label>
+          <label className="text-xs font-semibold text-slate-700 block mb-1.5">Exterior Wall Thickness (m)</label>
           <select
             value={wallThickness}
             onChange={(e) => setWallThickness(parseFloat(e.target.value))}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-500 outline-none"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-600 focus:border-red-600 outline-none"
           >
             <option value={0.23}>0.23m (9-inch Standard Brick/AAC)</option>
             <option value={0.20}>0.20m (8-inch Concrete Block)</option>
@@ -267,11 +267,11 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-1.5">Specification Standard</label>
+          <label className="text-xs font-semibold text-slate-700 block mb-1.5">Specification Standard</label>
           <select
             value={quality}
             onChange={(e) => setQuality(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-500 outline-none"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl p-2.5 text-xs font-medium focus:ring-1 focus:ring-red-600 focus:border-red-600 outline-none"
           >
             <option value="Standard">Standard (IS Spec, Ceramic Tile)</option>
             <option value="Premium">Premium (Granite, Teak Doors)</option>
@@ -283,17 +283,17 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
       {/* Floors and Rooms Editor */}
       <div className="space-y-6 pt-2">
         {floors.map((floor, fIdx) => (
-          <div key={floor.level} className="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-              <span className="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-2">
+          <div key={floor.level} className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <span className="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-2">
                 Floor Level {floor.level} {floor.level === 0 ? '(Ground Floor)' : `(Upper Level ${floor.level})`}
               </span>
               <button
                 type="button"
                 onClick={() => handleAddRoom(fIdx)}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition font-semibold"
+                className="bg-white hover:bg-slate-100 text-slate-800 text-xs px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1.5 transition font-semibold shadow-xs"
               >
-                <Plus className="w-3.5 h-3.5 text-red-500" />
+                <Plus className="w-3.5 h-3.5 text-red-600" />
                 Add Room
               </button>
             </div>
@@ -303,24 +303,24 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
               {floor.rooms.map((room, rIdx) => (
                 <div
                   key={rIdx}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-800/80 items-center text-xs"
+                  className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-white p-3.5 rounded-xl border border-slate-200 items-center text-xs shadow-xs"
                 >
                   <div className="md:col-span-3">
-                    <label className="text-[10px] text-slate-400 block mb-1">Room Name</label>
+                    <label className="text-[10px] text-slate-500 font-medium block mb-1">Room Name</label>
                     <input
                       type="text"
                       value={room.name}
                       onChange={(e) => handleRoomChange(fIdx, rIdx, 'name', e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded px-2.5 py-1.5 outline-none font-medium"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg px-2.5 py-1.5 outline-none font-medium focus:border-red-600"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-[10px] text-slate-400 block mb-1">Room Type</label>
+                    <label className="text-[10px] text-slate-500 font-medium block mb-1">Room Type</label>
                     <select
                       value={room.type}
                       onChange={(e) => handleRoomChange(fIdx, rIdx, 'type', e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded px-2 py-1.5 outline-none"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg px-2 py-1.5 outline-none focus:border-red-600"
                     >
                       <option value="LivingRoom">Living Room</option>
                       <option value="Bedroom">Bedroom</option>
@@ -332,35 +332,35 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-[10px] text-slate-400 block mb-1">Width (m)</label>
+                    <label className="text-[10px] text-slate-500 font-medium block mb-1">Width (m)</label>
                     <input
                       type="number"
                       step="0.1"
                       min="1.0"
                       value={room.width}
                       onChange={(e) => handleRoomChange(fIdx, rIdx, 'width', parseFloat(e.target.value) || 0)}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded px-2.5 py-1.5 outline-none font-mono"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg px-2.5 py-1.5 outline-none font-mono focus:border-red-600"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-[10px] text-slate-400 block mb-1">Length (m)</label>
+                    <label className="text-[10px] text-slate-500 font-medium block mb-1">Length (m)</label>
                     <input
                       type="number"
                       step="0.1"
                       min="1.0"
                       value={room.length}
                       onChange={(e) => handleRoomChange(fIdx, rIdx, 'length', parseFloat(e.target.value) || 0)}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded px-2.5 py-1.5 outline-none font-mono"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg px-2.5 py-1.5 outline-none font-mono focus:border-red-600"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="text-[10px] text-slate-400 block mb-1">Flooring Finish</label>
+                    <label className="text-[10px] text-slate-500 font-medium block mb-1">Flooring Finish</label>
                     <select
                       value={room.floor_material}
                       onChange={(e) => handleRoomChange(fIdx, rIdx, 'floor_material', e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded px-2 py-1.5 outline-none"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg px-2 py-1.5 outline-none focus:border-red-600"
                     >
                       <option value="Tiles">Vitrified Tiles</option>
                       <option value="Marble">Italian Marble</option>
@@ -375,7 +375,7 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
                       type="button"
                       disabled={floor.rooms.length <= 1}
                       onClick={() => handleRemoveRoom(fIdx, rIdx)}
-                      className="p-1.5 text-slate-500 hover:text-rose-400 disabled:opacity-30 disabled:pointer-events-none transition"
+                      className="p-1.5 text-slate-400 hover:text-red-600 disabled:opacity-30 disabled:pointer-events-none transition"
                       title="Delete Room"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -392,7 +392,7 @@ export default function HouseConfigurator({ initialConfig, onGenerate, plotWidth
         <button
           type="submit"
           disabled={isGenerating}
-          className="bg-red-600 hover:bg-red-700 disabled:bg-slate-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm shadow-lg shadow-red-600/25 flex items-center gap-2 transition"
+          className="bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md shadow-red-600/20 flex items-center gap-2 transition"
         >
           {isGenerating ? (
             <>

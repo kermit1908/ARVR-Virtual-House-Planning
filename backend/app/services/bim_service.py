@@ -19,13 +19,13 @@ class BIMService:
 
         wall_th = config.wall_thickness
         floor_h = config.floor_height
+        max_building_x = 0.0
+        max_building_z = 0.0
 
         for floor in config.floors:
             level = floor.level
             base_y = level * floor_h
             current_x = 0.0
-            max_floor_width = 0.0
-            max_floor_length = 0.0
             floor_area_sum = 0.0
 
             # Arrange rooms in a functional layout
@@ -43,6 +43,9 @@ class BIMService:
                 # Layout calculation
                 pos_x = col_x_offset
                 pos_z = row_y_offset
+
+                max_building_x = max(max_building_x, pos_x + r_w)
+                max_building_z = max(max_building_z, pos_z + r_l)
 
                 # 1. Room Floor Element
                 floor_elem_id = f"floor_{level}_{r_idx}_{uuid.uuid4().hex[:6]}"
@@ -158,20 +161,22 @@ class BIMService:
         # 6. Roof Slab Element at the top
         roof_level = len(config.floors)
         roof_y = roof_level * floor_h
-        roof_area = ground_coverage if ground_coverage > 0 else total_builtup_area / max(1, len(config.floors))
+        roof_width = round(max(max_building_x, 4.0), 2)
+        roof_length = round(max(max_building_z, 4.0), 2)
+        roof_area = round(roof_width * roof_length, 2)
         elements.append({
             "id": f"roof_slab_{uuid.uuid4().hex[:6]}",
             "type": "Roof",
             "floor_level": roof_level,
             "room_name": "Terrace Roof",
-            "length": round((roof_area ** 0.5), 2),
-            "width": round((roof_area ** 0.5), 2),
+            "length": roof_length,
+            "width": roof_width,
             "height": 0.15,
             "thickness": 0.15,
-            "area": round(roof_area, 2),
+            "area": roof_area,
             "volume": round(roof_area * 0.15, 3),
             "material": "RCC Slab + Waterproofing",
-            "position": [round((roof_area ** 0.5) / 2, 2), round(roof_y + 0.075, 2), round((roof_area ** 0.5) / 2, 2)],
+            "position": [round(roof_width / 2, 2), round(roof_y + 0.075, 2), round(roof_length / 2, 2)],
             "rotation": [0, 0, 0]
         })
 
